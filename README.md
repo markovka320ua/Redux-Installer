@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Redux Installer](https://img.shields.io/badge/Version-1.0.6-brightgreen)
+![Redux Installer](https://img.shields.io/badge/Version-1.0.8-brightgreen)
 ![Platform](https://img.shields.io/badge/Platform-Windows-blue)
 ![License](https://img.shields.io/badge/License-MIT-orange)
 
@@ -30,7 +30,7 @@
 ## 📸 Скриншоты
 
 <div align="center">
-  <img src="https://via.placeholder.com/800x500/1C1C1C/E91E63?text=Redux+Installer+Screenshot" alt="Redux Installer Interface"/>
+  <img src="https://i.ibb.co/SwFPNmbM/image.png" alt="Redux Installer Interface"/>
 </div>
 
 ---
