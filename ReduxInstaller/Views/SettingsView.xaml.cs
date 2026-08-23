@@ -1,7 +1,9 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using Microsoft.Win32;
 using ReduxInstaller.Services;
 
@@ -9,6 +11,8 @@ namespace ReduxInstaller.Views
 {
     public partial class SettingsView : UserControl
     {
+        private bool _isInitializing = true;
+
         public SettingsView()
         {
             InitializeComponent();
@@ -17,7 +21,9 @@ namespace ReduxInstaller.Views
 
         private void SettingsView_Loaded(object sender, RoutedEventArgs e)
         {
+            _isInitializing = true;
             LoadSettings();
+            _isInitializing = false;
         }
 
         private void LoadSettings()
@@ -29,12 +35,12 @@ namespace ReduxInstaller.Views
             if (!string.IsNullOrEmpty(gtaVPath))
             {
                 GtaVPathText.Text = gtaVPath;
-                GtaVPathText.Foreground = (System.Windows.Media.Brush)Resources["PrimaryTextBrush"];
+                GtaVPathText.Foreground = (Brush)FindResource("PrimaryTextBrush");
             }
             else
             {
-                GtaVPathText.Text = "Не налаштовано";
-                GtaVPathText.Foreground = (System.Windows.Media.Brush)Resources["SecondaryTextBrush"];
+                GtaVPathText.Text = LocalizationService.Instance.GetString("SettingsNotConfigured");
+                GtaVPathText.Foreground = (Brush)FindResource("SecondaryTextBrush");
             }
 
             // Load language
@@ -81,12 +87,16 @@ namespace ReduxInstaller.Views
             catch (Exception ex)
             {
                 LoggingService.Instance.Error("Failed to change GTA V path", ex);
-                MessageBox.Show("Не вдалося змінити шлях до GTA V.", "Помилка", MessageBoxButton.OK, MessageBoxImage.Error);
+                NotificationService.Instance.ShowError(
+                    LocalizationService.Instance.GetString("SettingsTitle"),
+                    LocalizationService.Instance.GetString("ErrorGtaVNotFound"));
             }
         }
 
         private void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (_isInitializing) return;
+
             if (LanguageComboBox.SelectedItem is ComboBoxItem selectedItem && e.AddedItems != null && e.AddedItems.Count > 0)
             {
                 var languageCode = selectedItem.Tag?.ToString();
@@ -95,26 +105,36 @@ namespace ReduxInstaller.Views
                     var settingsService = SettingsService.Instance;
                     var currentLanguage = settingsService.GetLanguage();
                     
-                    // Only show restart dialog if language actually changed
                     if (currentLanguage != languageCode)
                     {
                         settingsService.SetLanguage(languageCode);
                         LoggingService.Instance.Info($"Language changed to: {languageCode}");
                         
-                        // Show restart dialog
                         NotificationService.Instance.ShowConfirm(
                             LocalizationService.Instance.GetString("settings_restart_required"),
-                            "",
+                            LocalizationService.Instance.GetString("settings_restart_now") + "?",
                             onConfirm: () =>
                             {
-                                // Restart application
-                                System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
+                                var processPath = Environment.ProcessPath;
+                                if (string.IsNullOrEmpty(processPath))
+                                {
+                                    processPath = Process.GetCurrentProcess().MainModule?.FileName;
+                                }
+                                if (!string.IsNullOrEmpty(processPath) && File.Exists(processPath))
+                                {
+                                    Process.Start(new ProcessStartInfo
+                                    {
+                                        FileName = processPath,
+                                        UseShellExecute = true
+                                    });
+                                }
                                 Application.Current.Shutdown();
                             },
                             onCancel: () =>
                             {
-                                // Revert language selection if cancelled
+                                _isInitializing = true;
                                 LoadSettings();
+                                _isInitializing = false;
                             }
                         );
                     }
@@ -130,8 +150,8 @@ namespace ReduxInstaller.Views
         private void CleanTemp_Click(object sender, RoutedEventArgs e)
         {
             NotificationService.Instance.ShowConfirm(
-                "Підтвердження",
-                "Ви впевнені, що хочете очистити тимчасові файли?",
+                LocalizationService.Instance.GetString("SettingsCleanTemp"),
+                LocalizationService.Instance.GetString("SettingsCleanTemp") + "?",
                 onConfirm: () =>
                 {
                     try
@@ -139,14 +159,14 @@ namespace ReduxInstaller.Views
                         DownloadService.Instance.CleanTempFiles();
                         NotificationService.Instance.ShowSuccess(
                             LocalizationService.Instance.GetString("SettingsTitle"),
-                            "Тимчасові файли успішно очищено.");
+                            LocalizationService.Instance.GetString("notification_success_title"));
                     }
                     catch (Exception ex)
                     {
                         LoggingService.Instance.Error("Failed to clean temp files", ex);
                         NotificationService.Instance.ShowError(
                             LocalizationService.Instance.GetString("SettingsTitle"),
-                            "Не вдалося очистити тимчасові файли.");
+                            LocalizationService.Instance.GetString("notification_error_title"));
                     }
                 }
             );

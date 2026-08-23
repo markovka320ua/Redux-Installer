@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Threading;
 using ReduxInstaller.Services;
 using ReduxInstaller.Models;
@@ -82,7 +83,7 @@ namespace ReduxInstaller.Views
             ProgressCard.Visibility = Visibility.Collapsed;
             SuccessCard.Visibility = Visibility.Collapsed;
             UrlTextBox.Text = LocalizationService.Instance.GetString("InstallUrlPlaceholder");
-            UrlTextBox.Foreground = (System.Windows.Media.Brush)Resources["MutedTextBrush"];
+            UrlTextBox.Foreground = (Brush)FindResource("MutedTextBrush");
             _isInstalling = false;
             _currentDownloadTask = null;
             _downloadedFilePath = null;
@@ -97,7 +98,7 @@ namespace ReduxInstaller.Views
             if (UrlTextBox.Text == LocalizationService.Instance.GetString("InstallUrlPlaceholder"))
             {
                 UrlTextBox.Text = "";
-                UrlTextBox.Foreground = System.Windows.Media.Brushes.White;
+                UrlTextBox.Foreground = (Brush)FindResource("PrimaryTextBrush");
             }
         }
 
@@ -106,7 +107,7 @@ namespace ReduxInstaller.Views
             if (string.IsNullOrWhiteSpace(UrlTextBox.Text))
             {
                 UrlTextBox.Text = LocalizationService.Instance.GetString("InstallUrlPlaceholder");
-                UrlTextBox.Foreground = (System.Windows.Media.Brush)Resources["MutedTextBrush"];
+                UrlTextBox.Foreground = (Brush)FindResource("MutedTextBrush");
             }
         }
 

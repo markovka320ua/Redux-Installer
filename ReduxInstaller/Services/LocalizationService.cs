@@ -16,11 +16,25 @@ namespace ReduxInstaller.Services
 
         public event EventHandler? LanguageChanged;
 
-        public string CurrentLanguage => _currentCulture.TwoLetterISOLanguageName;
+        public string CurrentLanguage => _currentCulture.Name;
 
         private LocalizationService()
         {
-            _currentCulture = CultureInfo.GetCultureInfo("ru-RU");
+            var savedLang = SettingsService.Instance.GetLanguage();
+            if (string.IsNullOrEmpty(savedLang))
+            {
+                savedLang = "uk-UA";
+            }
+
+            try
+            {
+                _currentCulture = CultureInfo.GetCultureInfo(savedLang);
+            }
+            catch
+            {
+                _currentCulture = CultureInfo.GetCultureInfo("uk-UA");
+            }
+
             LoadResources();
         }
 
@@ -28,31 +42,42 @@ namespace ReduxInstaller.Services
         {
             try
             {
-                // Try to load from publish directory first, then from base directory
-                var resourceFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Localization", _currentCulture.Name, "strings.json");
-                
-                if (!File.Exists(resourceFile))
+                var cultureName = _currentCulture.Name;
+                var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+
+                var candidatePaths = new List<string>
                 {
-                    // Try alternative path for development/publish scenarios
-                    var altPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "Resources", "Localization", _currentCulture.Name, "strings.json");
-                    if (File.Exists(altPath))
+                    Path.Combine(baseDir, "Resources", "Localization", cultureName, "strings.json"),
+                    Path.Combine(baseDir, "..", "..", "Resources", "Localization", cultureName, "strings.json"),
+                    Path.Combine(baseDir, "Resources", "Localization", "uk-UA", "strings.json")
+                };
+
+                string? foundFile = null;
+                foreach (var path in candidatePaths)
+                {
+                    var fullPath = Path.GetFullPath(path);
+                    if (File.Exists(fullPath))
                     {
-                        resourceFile = Path.GetFullPath(altPath);
+                        foundFile = fullPath;
+                        break;
                     }
                 }
-                
-                if (File.Exists(resourceFile))
+
+                if (foundFile != null)
                 {
-                    var json = File.ReadAllText(resourceFile);
+                    var json = File.ReadAllText(foundFile);
                     _strings = JsonSerializer.Deserialize<Dictionary<string, string>>(json) ?? new Dictionary<string, string>();
+                    LoggingService.Instance.Info($"Localization loaded for culture '{cultureName}' from: {foundFile}");
                 }
                 else
                 {
                     _strings = new Dictionary<string, string>();
+                    LoggingService.Instance.Warning($"Localization file not found for culture '{cultureName}'");
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                LoggingService.Instance.Error("Failed to load localization resources", ex);
                 _strings = new Dictionary<string, string>();
             }
         }
@@ -62,16 +87,13 @@ namespace ReduxInstaller.Services
             try
             {
                 var newCulture = CultureInfo.GetCultureInfo(languageCode);
-                if (_currentCulture.Name != newCulture.Name)
-                {
-                    _currentCulture = newCulture;
-                    LoadResources();
-                    LanguageChanged?.Invoke(this, EventArgs.Empty);
-                }
+                _currentCulture = newCulture;
+                LoadResources();
+                LanguageChanged?.Invoke(this, EventArgs.Empty);
             }
-            catch
+            catch (Exception ex)
             {
-                // Keep current language if change fails
+                LoggingService.Instance.Error($"Failed to set language to '{languageCode}'", ex);
             }
         }
 
@@ -79,11 +101,11 @@ namespace ReduxInstaller.Services
         {
             try
             {
-                if (_strings != null && _strings.TryGetValue(key, out var value))
+                if (_strings != null && _strings.TryGetValue(key, out var value) && !string.IsNullOrEmpty(value))
                 {
                     return value;
                 }
-                return key; // Return key if not found
+                return key;
             }
             catch
             {
@@ -93,13 +115,12 @@ namespace ReduxInstaller.Services
 
         public IEnumerable<CultureInfo> GetAvailableLanguages()
         {
-            var languages = new List<CultureInfo>
+            return new List<CultureInfo>
             {
                 CultureInfo.GetCultureInfo("uk-UA"),
                 CultureInfo.GetCultureInfo("en-US"),
                 CultureInfo.GetCultureInfo("ru-RU")
             };
-            return languages;
         }
     }
 }

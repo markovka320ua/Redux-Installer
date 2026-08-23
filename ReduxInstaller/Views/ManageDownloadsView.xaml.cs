@@ -1,3 +1,6 @@
+using System;
+using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using ReduxInstaller.Services;
 using ReduxInstaller.Models;
@@ -13,7 +16,7 @@ namespace ReduxInstaller.Views
             Unloaded += ManageDownloadsView_Unloaded;
         }
 
-        private void ManageDownloadsView_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        private void ManageDownloadsView_Loaded(object sender, RoutedEventArgs e)
         {
             var downloadManager = DownloadManagerService.Instance;
             downloadManager.DownloadTaskAdded += DownloadManager_DownloadTaskAdded;
@@ -24,7 +27,7 @@ namespace ReduxInstaller.Views
             LoadActiveDownloads();
         }
 
-        private void ManageDownloadsView_Unloaded(object sender, System.Windows.RoutedEventArgs e)
+        private void ManageDownloadsView_Unloaded(object sender, RoutedEventArgs e)
         {
             var downloadManager = DownloadManagerService.Instance;
             downloadManager.DownloadTaskAdded -= DownloadManager_DownloadTaskAdded;
@@ -38,67 +41,48 @@ namespace ReduxInstaller.Views
             try
             {
                 var downloadManager = DownloadManagerService.Instance;
-                ActiveDownloadsListBox.ItemsSource = downloadManager.ActiveDownloads;
+                var downloads = downloadManager.ActiveDownloads;
+                
+                ActiveDownloadsListBox.ItemsSource = downloads;
 
-                if (downloadManager.ActiveDownloads.Count == 0)
+                if (downloads == null || downloads.Count == 0)
                 {
-                    ActiveDownloadsListBox.ItemsSource = null;
-                    var emptyText = new TextBlock
-                    {
-                        Text = LocalizationService.Instance.GetString("download_empty"),
-                        FontSize = 14,
-                        Foreground = System.Windows.Media.Brushes.Gray,
-                        HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
-                        Margin = new System.Windows.Thickness(0, 40, 0, 0)
-                    };
-                    ActiveDownloadsListBox.Items.Add(emptyText);
+                    EmptyStateBorder.Visibility = Visibility.Visible;
+                    ActiveDownloadsListBox.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    EmptyStateBorder.Visibility = Visibility.Collapsed;
+                    ActiveDownloadsListBox.Visibility = Visibility.Visible;
                 }
             }
             catch (Exception ex)
             {
                 LoggingService.Instance.Error("Failed to load active downloads", ex);
-                ActiveDownloadsListBox.ItemsSource = null;
-                var errorText = new TextBlock
-                {
-                    Text = "Не вдалося завантажити активні завантаження",
-                    FontSize = 14,
-                    Foreground = System.Windows.Media.Brushes.Red,
-                    HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
-                    Margin = new System.Windows.Thickness(0, 40, 0, 0)
-                };
-                ActiveDownloadsListBox.Items.Add(errorText);
             }
         }
 
         private void DownloadManager_DownloadTaskAdded(object? sender, DownloadTask task)
         {
-            LoadActiveDownloads();
+            Dispatcher.Invoke(LoadActiveDownloads);
         }
 
         private void DownloadManager_DownloadTaskUpdated(object? sender, DownloadTask task)
         {
-            // ListBox will auto-update due to ObservableCollection
+            // ObservableCollection auto-updates
         }
 
         private void DownloadManager_DownloadTaskCompleted(object? sender, DownloadTask task)
         {
-            LoadActiveDownloads();
+            Dispatcher.Invoke(LoadActiveDownloads);
         }
 
         private void DownloadManager_DownloadTaskFailed(object? sender, DownloadTask task)
         {
-            LoadActiveDownloads();
+            Dispatcher.Invoke(LoadActiveDownloads);
         }
 
-        private void PauseButton_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-            // TODO: Implement pause functionality
-            NotificationService.Instance.ShowInfo(
-                LocalizationService.Instance.GetString("download_pause"),
-                "Пауза завантаження ще не реалізована");
-        }
-
-        private void CancelButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             if (button?.DataContext is DownloadTask task)
@@ -107,22 +91,22 @@ namespace ReduxInstaller.Views
             }
         }
 
-        private void RetryButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void RetryButton_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             if (button?.DataContext is DownloadTask task)
             {
                 NotificationService.Instance.ShowInfo(
                     LocalizationService.Instance.GetString("download_retry"),
-                    $"Повтор завантаження {task.FileName} ще не реалізовано");
+                    $"{task.FileName}");
             }
         }
 
-        private void ClearHistory_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void ClearHistory_Click(object sender, RoutedEventArgs e)
         {
             NotificationService.Instance.ShowConfirm(
                 LocalizationService.Instance.GetString("download_clear_history"),
-                "Ви впевнені, що хочете очистити всі активні завантаження?",
+                LocalizationService.Instance.GetString("download_clear_history") + "?",
                 onConfirm: () =>
                 {
                     var downloadManager = DownloadManagerService.Instance;
@@ -134,9 +118,6 @@ namespace ReduxInstaller.Views
                         }
                     }
                     LoadActiveDownloads();
-                    NotificationService.Instance.ShowSuccess(
-                        LocalizationService.Instance.GetString("download_clear_history"),
-                        "Активні завантаження успішно очищені");
                 }
             );
         }

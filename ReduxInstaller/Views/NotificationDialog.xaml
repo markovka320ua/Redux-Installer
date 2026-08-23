@@ -8,84 +8,108 @@
         mc:Ignorable="d"
         Title="Notification" 
         Height="Auto" 
-        Width="400"
+        Width="480"
+        MinWidth="420"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
         WindowStartupLocation="CenterOwner"
-        SizeToContent="Height">
+        SizeToContent="Height"
+        ResizeMode="NoResize">
     
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Resources/Styles/App.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            
-            <Style x:Key="NotificationButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
-                <Setter Property="Padding" Value="24,10"/>
-                <Setter Property="Width" Value="120"/>
-            </Style>
         </ResourceDictionary>
     </Window.Resources>
 
-    <Grid>
-        <!-- Notification Card -->
-        <Border Background="#1C1C1C" 
-                CornerRadius="16" 
-                BorderBrush="#333333" 
-                BorderThickness="1"
-                Padding="32"
-                Width="400"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
-            <Border.Effect>
-                <DropShadowEffect Color="#000000" Opacity="0.5" BlurRadius="20" ShadowDepth="0"/>
-            </Border.Effect>
-            
-            <StackPanel>
-                <!-- Icon and Title -->
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
-                    <TextBlock x:Name="IconTextBlock" 
-                               Text="✓" 
-                               FontSize="32" 
-                               FontWeight="Bold"
-                               Margin="0,0,12,0"
-                               VerticalAlignment="Center"/>
-                    
-                    <TextBlock x:Name="TitleTextBlock" 
-                               Text="Success" 
-                               FontSize="20" 
-                               FontWeight="SemiBold" 
-                               Foreground="{StaticResource PrimaryTextBrush}"
-                               VerticalAlignment="Center"/>
-                </StackPanel>
+    <Border Margin="14"
+            Background="{StaticResource CardBrush}" 
+            CornerRadius="16" 
+            BorderBrush="{StaticResource BorderBrush}" 
+            BorderThickness="1"
+            Padding="24"
+            MouseLeftButtonDown="Border_MouseLeftButtonDown">
+        <Border.Effect>
+            <DropShadowEffect Color="#000000" Opacity="0.75" BlurRadius="24" ShadowDepth="6"/>
+        </Border.Effect>
+        
+        <StackPanel>
+            <!-- Icon and Title Header -->
+            <Grid Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Border x:Name="IconBadgeBorder"
+                        Grid.Column="0"
+                        Background="{StaticResource AccentBadgeBg}"
+                        CornerRadius="10"
+                        Width="40" Height="40"
+                        Margin="0,0,14,0"
+                        VerticalAlignment="Top">
+                    <Path x:Name="IconPath"
+                          Data="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"
+                          Fill="{StaticResource AccentHoverBrush}"
+                          Width="18" Height="18"
+                          Stretch="Uniform"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"/>
+                </Border>
                 
-                <!-- Message -->
-                <TextBlock x:Name="MessageTextBlock" 
-                           Text="Operation completed successfully" 
-                           FontSize="14" 
-                           Foreground="{StaticResource SecondaryTextBrush}"
+                <TextBlock x:Name="TitleTextBlock" 
+                           Grid.Column="1"
+                           Text="Notification" 
+                           FontSize="17" 
+                           FontWeight="Bold" 
+                           Foreground="{StaticResource PrimaryTextBrush}"
                            TextWrapping="Wrap"
-                           Margin="0,0,0,24"/>
-                
-                <!-- Buttons -->
-                <StackPanel x:Name="ButtonsPanel" 
-                            Orientation="Horizontal" 
-                            HorizontalAlignment="Right">
-                    <Button x:Name="PrimaryButton" 
-                            Style="{StaticResource NotificationButton}"
-                            Content="OK"
-                            Click="PrimaryButton_Click"/>
-                    
-                    <Button x:Name="SecondaryButton" 
-                            Style="{StaticResource SecondaryButton}"
-                            Content="Cancel"
-                            Width="120"
-                            Margin="8,0,0,0"
-                            Visibility="Collapsed"
-                            Click="SecondaryButton_Click"/>
-                </StackPanel>
+                           VerticalAlignment="Center"
+                           Margin="0,0,12,0"/>
+
+                <Button Grid.Column="2"
+                        Style="{StaticResource TitleBarCloseButton}"
+                        Click="SecondaryButton_Click"
+                        VerticalAlignment="Top">
+                    <Path Data="M 0 0 L 10 10 M 10 0 L 0 10" 
+                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" 
+                          StrokeThickness="1.5"
+                          Width="10" Height="10"
+                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Button>
+            </Grid>
+            
+            <!-- Message Content -->
+            <TextBlock x:Name="MessageTextBlock" 
+                       Text="Message content goes here." 
+                       FontSize="14" 
+                       Foreground="{StaticResource SecondaryTextBrush}"
+                       TextWrapping="Wrap"
+                       LineHeight="20"
+                       Margin="0,0,0,24"/>
+            
+            <!-- Buttons -->
+            <StackPanel x:Name="ButtonsPanel" 
+                        Orientation="Horizontal" 
+                        HorizontalAlignment="Right">
+                <Button x:Name="SecondaryButton" 
+                        Style="{StaticResource SecondaryButton}" 
+                        Content="{utilities:Loc CommonCancel}"
+                        MinWidth="100"
+                        Margin="0,0,10,0"
+                        Visibility="Collapsed"
+                        Click="SecondaryButton_Click"/>
+
+                <Button x:Name="PrimaryButton" 
+                        Style="{StaticResource PrimaryButton}" 
+                        Content="{utilities:Loc CommonOK}"
+                        MinWidth="100"
+                        Click="PrimaryButton_Click"/>
             </StackPanel>
-        </Border>
-    </Grid>
+        </StackPanel>
+    </Border>
 </Window>

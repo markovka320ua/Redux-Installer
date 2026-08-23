@@ -1,4 +1,8 @@
+using System;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
 using Microsoft.Win32;
 using ReduxInstaller.Services;
 
@@ -13,10 +17,18 @@ namespace ReduxInstaller.Views
             InitializeComponent();
         }
 
-        private void AutoDetectButton_Click(object sender, RoutedEventArgs e)
+        private void Header_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            StatusText.Text = "Пошук GTA V...";
-            StatusText.Foreground = (System.Windows.Media.Brush)Resources["MutedTextBrush"];
+            if (e.ButtonState == MouseButtonState.Pressed)
+            {
+                this.DragMove();
+            }
+        }
+
+        private async void AutoDetectButton_Click(object sender, RoutedEventArgs e)
+        {
+            StatusText.Text = LocalizationService.Instance.GetString("InstallPreparing");
+            StatusText.Foreground = (Brush)FindResource("MutedTextBrush");
 
             var gtaVService = new GtaVService();
             var detectedPath = gtaVService.AutoDetectGtaV();
@@ -24,21 +36,20 @@ namespace ReduxInstaller.Views
             if (!string.IsNullOrEmpty(detectedPath))
             {
                 SelectedPath = detectedPath;
-                StatusText.Text = $"Знайдено: {detectedPath}";
-                StatusText.Foreground = (System.Windows.Media.Brush)Resources["SuccessBrush"];
+                StatusText.Text = $"{LocalizationService.Instance.GetString("HomeGtaVFound")}: {detectedPath}";
+                StatusText.Foreground = (Brush)FindResource("SuccessBrush");
                 
-                // Auto-close after successful detection
-                System.Threading.Thread.Sleep(1000);
+                await Task.Delay(600);
                 DialogResult = true;
                 Close();
             }
             else
             {
-                StatusText.Text = "GTA V не знайдено в типових місцях. Спробуйте вибрати папку вручну.";
-                StatusText.Foreground = (System.Windows.Media.Brush)Resources["WarningBrush"];
+                StatusText.Text = LocalizationService.Instance.GetString("ErrorGtaVNotFound");
+                StatusText.Foreground = (Brush)FindResource("WarningBrush");
                 NotificationService.Instance.ShowWarning(
                     LocalizationService.Instance.GetString("GtaVSelectionTitle"),
-                    "GTA V не знайдено в типових місцях. Спробуйте вибрати папку вручну.");
+                    LocalizationService.Instance.GetString("ErrorGtaVNotFound"));
             }
         }
 
@@ -57,19 +68,19 @@ namespace ReduxInstaller.Views
                 if (gtaVService.IsValidGtaVInstallation(selectedPath))
                 {
                     SelectedPath = selectedPath;
-                    StatusText.Text = $"Вибрано: {selectedPath}";
-                    StatusText.Foreground = (System.Windows.Media.Brush)Resources["SuccessBrush"];
+                    StatusText.Text = $"{LocalizationService.Instance.GetString("HomeGtaVFound")}: {selectedPath}";
+                    StatusText.Foreground = (Brush)FindResource("SuccessBrush");
                     
                     DialogResult = true;
                     Close();
                 }
                 else
                 {
-                    StatusText.Text = "Вибрана папка не містить GTA V. Спробуйте іншу папку.";
-                    StatusText.Foreground = (System.Windows.Media.Brush)Resources["ErrorBrush"];
+                    StatusText.Text = LocalizationService.Instance.GetString("ErrorGtaVNotFound");
+                    StatusText.Foreground = (Brush)FindResource("ErrorBrush");
                     NotificationService.Instance.ShowError(
                         LocalizationService.Instance.GetString("GtaVSelectionTitle"),
-                        "Вибрана папка не містить GTA V. Спробуйте іншу папку.");
+                        LocalizationService.Instance.GetString("ErrorGtaVNotFound"));
                 }
             }
         }

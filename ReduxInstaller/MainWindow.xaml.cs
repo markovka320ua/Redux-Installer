@@ -1,4 +1,9 @@
-﻿using System.Windows;
+using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Shapes;
 using ReduxInstaller.Services;
 using ReduxInstaller.Views;
 
@@ -9,16 +14,48 @@ namespace ReduxInstaller;
 /// </summary>
 public partial class MainWindow : Window
 {
+    private static readonly Geometry MaximizeGeometry = Geometry.Parse("M 0 0 L 10 0 L 10 10 L 0 10 Z");
+    private static readonly Geometry RestoreGeometry = Geometry.Parse("M 2 0 L 10 0 L 10 8 L 8 8 L 8 10 L 0 10 L 0 2 L 2 2 Z M 2 2 L 2 8 L 8 8 L 8 2 Z");
+
     public MainWindow()
     {
         InitializeComponent();
         this.Loaded += MainWindow_Loaded;
+        this.StateChanged += MainWindow_StateChanged;
     }
 
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
         // Navigate to Home view by default
         NavigateToHome();
+    }
+
+    private void MainWindow_StateChanged(object? sender, EventArgs e)
+    {
+        if (this.WindowState == WindowState.Maximized)
+        {
+            MaximizeIconPath.Data = RestoreGeometry;
+            MaximizeBtn.ToolTip = "Restore";
+        }
+        else
+        {
+            MaximizeIconPath.Data = MaximizeGeometry;
+            MaximizeBtn.ToolTip = "Maximize";
+        }
+    }
+
+    private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (e.ClickCount == 2)
+        {
+            MaximizeButton_Click(sender, e);
+            return;
+        }
+
+        if (e.ButtonState == MouseButtonState.Pressed)
+        {
+            this.DragMove();
+        }
     }
 
     private void MinimizeButton_Click(object sender, RoutedEventArgs e)
@@ -46,8 +83,7 @@ public partial class MainWindow : Window
     private void CheckAndClose()
     {
         // Check if there's an active installation
-        var installView = ContentArea.Content as InstallView;
-        if (installView != null && installView.IsInstalling)
+        if (ContentArea.Content is InstallView installView && installView.IsInstalling)
         {
             NotificationService.Instance.ShowConfirm(
                 LocalizationService.Instance.GetString("WindowCloseConfirmTitle"),
@@ -125,23 +161,17 @@ public partial class MainWindow : Window
         DownloadManagerNavButton.Visibility = Visibility.Collapsed;
     }
 
-    private void SetActiveNavButton(System.Windows.Controls.Button activeButton)
+    private void SetActiveNavButton(Button activeButton)
     {
-        // Reset all nav buttons to default style
-        HomeNavButton.Style = (System.Windows.Style)Resources["NavButton"];
-        InstallNavButton.Style = (System.Windows.Style)Resources["NavButton"];
-        SettingsNavButton.Style = (System.Windows.Style)Resources["NavButton"];
-        AboutNavButton.Style = (System.Windows.Style)Resources["NavButton"];
-        DownloadManagerNavButton.Style = (System.Windows.Style)Resources["NavButton"];
+        var navStyle = (Style)FindResource("NavButton");
+        var activeStyle = (Style)FindResource("ActiveNavButton");
 
-        // Set active button style
-        activeButton.Style = (System.Windows.Style)Resources["ActiveNavButton"];
-    }
+        HomeNavButton.Style = navStyle;
+        InstallNavButton.Style = navStyle;
+        SettingsNavButton.Style = navStyle;
+        AboutNavButton.Style = navStyle;
+        DownloadManagerNavButton.Style = navStyle;
 
-    protected override void OnMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e)
-    {
-        base.OnMouseLeftButtonDown(e);
-        if (e.ButtonState == System.Windows.Input.MouseButtonState.Pressed)
-            this.DragMove();
+        activeButton.Style = activeStyle;
     }
 }

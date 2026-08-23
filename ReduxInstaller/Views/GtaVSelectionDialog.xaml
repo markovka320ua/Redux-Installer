@@ -7,8 +7,8 @@
         xmlns:utilities="clr-namespace:ReduxInstaller.Utilities"
         mc:Ignorable="d"
         Title="Redux Installer" 
-        Height="400" 
-        Width="600"
+        Height="420" 
+        Width="580"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
@@ -23,62 +23,113 @@
         </ResourceDictionary>
     </Window.Resources>
 
-    <Border Background="{StaticResource BackgroundBrush}" 
-            CornerRadius="8"
+    <Border Margin="12"
+            Background="{StaticResource BackgroundBrush}" 
+            CornerRadius="14"
             BorderBrush="{StaticResource BorderBrush}" 
             BorderThickness="1">
+        <Border.Effect>
+            <DropShadowEffect Color="#000000" Opacity="0.7" BlurRadius="24" ShadowDepth="6"/>
+        </Border.Effect>
         <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="46"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
             <!-- Header -->
-            <Grid Height="48" 
-                  VerticalAlignment="Top" 
-                  Background="{StaticResource SidebarBrush}">
-                <TextBlock Text="{utilities:Loc GtaVSelectionTitle}" 
-                           FontSize="16" 
-                           FontWeight="SemiBold"
-                           Foreground="{StaticResource PrimaryTextBrush}"
-                           VerticalAlignment="Center"
-                           Margin="24,0"/>
+            <Grid Grid.Row="0" 
+                  Background="{StaticResource TitleBarBrush}"
+                  MouseLeftButtonDown="Header_MouseLeftButtonDown">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0">
+                    <Path Data="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4-3c-.83 0-1.5-.67-1.5-1.5S18.67 9 19.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"
+                          Fill="{StaticResource AccentBrush}"
+                          Width="16" Height="16"
+                          Stretch="Uniform"
+                          Margin="0,0,10,0"
+                          VerticalAlignment="Center"/>
+                    <TextBlock Text="{utilities:Loc GtaVSelectionTitle}" 
+                               FontSize="14" 
+                               FontWeight="Bold"
+                               Foreground="{StaticResource PrimaryTextBrush}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <Button Grid.Column="1"
+                        Style="{StaticResource TitleBarCloseButton}"
+                        Margin="0,0,8,0"
+                        Click="CancelButton_Click">
+                    <Path Data="M 0 0 L 10 10 M 10 0 L 0 10" 
+                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" 
+                          StrokeThickness="1.5"
+                          Width="10" Height="10"
+                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Button>
             </Grid>
 
             <!-- Content -->
-            <StackPanel Margin="32,48,32,32">
+            <StackPanel Grid.Row="1" Margin="28,24,28,24">
                 <TextBlock Text="{utilities:Loc GtaVSelectionDescription}" 
                            FontSize="14" 
                            Foreground="{StaticResource SecondaryTextBrush}"
                            TextWrapping="Wrap"
-                           Margin="0,0,0,32"/>
+                           LineHeight="20"
+                           Margin="0,0,0,24"/>
 
                 <Button x:Name="AutoDetectButton" 
                         Style="{StaticResource SecondaryButton}" 
-                        Content="{utilities:Loc GtaVAutoDetectButton}"
-                        Width="200"
-                        Height="40"
+                        Width="260"
+                        Height="44"
                         HorizontalAlignment="Left"
                         Margin="0,0,0,12"
-                        Click="AutoDetectButton_Click"/>
+                        Click="AutoDetectButton_Click">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Path Data="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"
+                              Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                              Width="16" Height="16"
+                              Stretch="Uniform"
+                              Margin="0,0,10,0"
+                              VerticalAlignment="Center"/>
+                        <TextBlock Text="{utilities:Loc GtaVAutoDetectButton}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
 
                 <Button x:Name="ManualSelectButton" 
                         Style="{StaticResource PrimaryButton}" 
-                        Content="{utilities:Loc GtaVManualSelectButton}"
-                        Width="200"
-                        Height="40"
+                        Width="260"
+                        Height="44"
                         HorizontalAlignment="Left"
-                        Margin="0,0,0,24"
-                        Click="ManualSelectButton_Click"/>
+                        Margin="0,0,0,20"
+                        Click="ManualSelectButton_Click">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Path Data="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"
+                              Fill="White"
+                              Width="16" Height="16"
+                              Stretch="Uniform"
+                              Margin="0,0,10,0"
+                              VerticalAlignment="Center"/>
+                        <TextBlock Text="{utilities:Loc GtaVManualSelectButton}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
 
                 <TextBlock x:Name="StatusText" 
                            Text="" 
                            FontSize="12" 
                            Foreground="{StaticResource MutedTextBrush}"
                            TextWrapping="Wrap"
-                           Margin="0,0,0,24"/>
+                           Margin="0,0,0,16"/>
 
                 <Button x:Name="CancelButton" 
                         Style="{StaticResource SecondaryButton}" 
                         Content="{utilities:Loc CommonCancel}"
-                        Width="120"
+                        Width="100"
                         Height="36"
-                        HorizontalAlignment="Left"
+                        HorizontalAlignment="Right"
                         Click="CancelButton_Click"/>
             </StackPanel>
         </Grid>

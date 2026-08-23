@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:ReduxInstaller.Views"
              xmlns:utilities="clr-namespace:ReduxInstaller.Utilities"
              mc:Ignorable="d" 
-             d:DesignHeight="800" d:DesignWidth="1200">
+             d:DesignHeight="700" d:DesignWidth="1000">
     
     <UserControl.Resources>
         <ResourceDictionary>
@@ -23,114 +23,167 @@
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <StackPanel Grid.Row="0" Margin="0,0,0,48">
+        <StackPanel Grid.Row="0" Margin="0,0,0,32">
             <TextBlock Text="{utilities:Loc SettingsTitle}" 
-                       FontSize="42" 
+                       FontSize="34" 
                        FontWeight="Bold" 
                        Foreground="{StaticResource PrimaryTextBrush}"
-                       Margin="0,0,0,12"/>
+                       Margin="0,0,0,8"/>
             
-            <TextBlock Text="Налаштуйте програму під ваші потреби" 
-                       FontSize="16" 
+            <TextBlock Text="{utilities:Loc SettingsSubtitle}" 
+                       FontSize="15" 
                        Foreground="{StaticResource SecondaryTextBrush}"/>
         </StackPanel>
 
         <!-- Content -->
-        <StackPanel Grid.Row="1" MaxWidth="800">
-            <!-- GTA V Path Section -->
-            <Border Style="{StaticResource Card}" Margin="0,0,0,32">
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
-                        <TextBlock Text="🎮" FontSize="32" Margin="0,0,16,0"/>
-                        <TextBlock Text="{utilities:Loc SettingsGtaVPath}" 
-                                   FontSize="20" 
-                                   FontWeight="SemiBold" 
-                                   Foreground="{StaticResource PrimaryTextBrush}"
-                                   VerticalAlignment="Center"/>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel MaxWidth="820" HorizontalAlignment="Left">
+                <!-- GTA V Path Section -->
+                <Border Style="{StaticResource Card}" Margin="0,0,0,24">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                            <Border Background="{StaticResource AccentBadgeBg}"
+                                    CornerRadius="10"
+                                    Width="40" Height="40"
+                                    Margin="0,0,14,0">
+                                <Path Data="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4-3c-.83 0-1.5-.67-1.5-1.5S18.67 9 19.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"
+                                      Fill="{StaticResource AccentHoverBrush}"
+                                      Width="20" Height="20"
+                                      Stretch="Uniform"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="{utilities:Loc SettingsGtaVPath}" 
+                                       FontSize="18" 
+                                       FontWeight="Bold" 
+                                       Foreground="{StaticResource PrimaryTextBrush}"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Grid.Column="0" 
+                                    Style="{StaticResource CardSubtle}"
+                                    Padding="16,12"
+                                    Margin="0,0,12,0">
+                                <TextBlock x:Name="GtaVPathText" 
+                                           Text="{utilities:Loc SettingsNotConfigured}" 
+                                           FontSize="13" 
+                                           Foreground="{StaticResource SecondaryTextBrush}"
+                                           TextTrimming="CharacterEllipsis"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+
+                            <Button Grid.Column="1" 
+                                    Style="{StaticResource SecondaryButton}" 
+                                    Click="ChangeGtaVPath_Click">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Path Data="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"
+                                          Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                          Width="14" Height="14"
+                                          Stretch="Uniform"
+                                          Margin="0,0,8,0"
+                                          VerticalAlignment="Center"/>
+                                    <TextBlock Text="{utilities:Loc SettingsChangePath}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
                     </StackPanel>
+                </Border>
 
-                    <Grid Margin="0,0,0,16">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
+                <!-- Language Section -->
+                <Border Style="{StaticResource Card}" Margin="0,0,0,24">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                            <Border Background="{StaticResource AccentBadgeBg}"
+                                    CornerRadius="10"
+                                    Width="40" Height="40"
+                                    Margin="0,0,14,0">
+                                <Path Data="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2 0-.68.07-1.35.16-2h4.68c.09.65.16 1.32.16 2 0 .68-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"
+                                      Fill="{StaticResource AccentHoverBrush}"
+                                      Width="20" Height="20"
+                                      Stretch="Uniform"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="{utilities:Loc SettingsLanguage}" 
+                                       FontSize="18" 
+                                       FontWeight="Bold" 
+                                       Foreground="{StaticResource PrimaryTextBrush}"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
 
-                        <Border Grid.Column="0" 
-                                Background="#1A1A1A" 
-                                BorderBrush="#2A2A2A" 
-                                BorderThickness="1" 
-                                CornerRadius="8" 
-                                Padding="18,14"
-                                Margin="0,0,12,0">
-                            <TextBlock x:Name="GtaVPathText" 
-                                       Text="Не налаштовано" 
-                                       FontSize="14" 
-                                       Foreground="{StaticResource SecondaryTextBrush}"
-                                       TextTrimming="CharacterEllipsis"/>
-                        </Border>
-
-                        <Button Grid.Column="1" 
-                                Style="{StaticResource SecondaryButton}" 
-                                Content="{utilities:Loc SettingsChangePath}"
-                                Width="150"
-                                Height="40"
-                                Click="ChangeGtaVPath_Click"/>
-                    </Grid>
-                </StackPanel>
-            </Border>
-
-            <!-- Language Section -->
-            <Border Style="{StaticResource Card}" Margin="0,0,0,32">
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
-                        <TextBlock Text="🌐" FontSize="32" Margin="0,0,16,0"/>
-                        <TextBlock Text="{utilities:Loc SettingsLanguage}" 
-                                   FontSize="20" 
-                                   FontWeight="SemiBold" 
-                                   Foreground="{StaticResource PrimaryTextBrush}"
-                                   VerticalAlignment="Center"/>
+                        <ComboBox x:Name="LanguageComboBox" 
+                                  Width="240" 
+                                  Height="44"
+                                  HorizontalAlignment="Left"
+                                  Style="{StaticResource CustomComboBox}"
+                                  SelectionChanged="LanguageComboBox_SelectionChanged">
+                            <ComboBoxItem Content="Українська" Tag="uk-UA"/>
+                            <ComboBoxItem Content="English" Tag="en-US"/>
+                            <ComboBoxItem Content="Русский" Tag="ru-RU"/>
+                        </ComboBox>
                     </StackPanel>
+                </Border>
 
-                    <ComboBox x:Name="LanguageComboBox" 
-                              Width="220" 
-                              Height="48"
-                              HorizontalAlignment="Left"
-                              Style="{StaticResource CustomComboBox}"
-                              ItemContainerStyle="{StaticResource CustomComboBoxItem}"
-                              SelectionChanged="LanguageComboBox_SelectionChanged">
-                        <ComboBoxItem Content="Українська" Tag="uk-UA"/>
-                        <ComboBoxItem Content="English" Tag="en-US"/>
-                        <ComboBoxItem Content="Русский" Tag="ru-RU" IsSelected="True"/>
-                    </ComboBox>
-                </StackPanel>
-            </Border>
+                <!-- Other Settings Section -->
+                <Border Style="{StaticResource Card}">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                            <Border Background="{StaticResource AccentBadgeBg}"
+                                    CornerRadius="10"
+                                    Width="40" Height="40"
+                                    Margin="0,0,14,0">
+                                <Path Data="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"
+                                      Fill="{StaticResource AccentHoverBrush}"
+                                      Width="20" Height="20"
+                                      Stretch="Uniform"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="{utilities:Loc SettingsOther}" 
+                                       FontSize="18" 
+                                       FontWeight="Bold" 
+                                       Foreground="{StaticResource PrimaryTextBrush}"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
 
-            <!-- Other Settings Section -->
-            <Border Style="{StaticResource Card}">
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
-                        <TextBlock Text="⚙️" FontSize="32" Margin="0,0,16,0"/>
-                        <TextBlock Text="Інше" 
-                                   FontSize="20" 
-                                   FontWeight="SemiBold" 
-                                   Foreground="{StaticResource PrimaryTextBrush}"
-                                   VerticalAlignment="Center"/>
+                        <WrapPanel>
+                            <Button Style="{StaticResource SecondaryButton}" 
+                                    Margin="0,0,12,12"
+                                    Click="OpenLogs_Click">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Path Data="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"
+                                          Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                          Width="14" Height="14"
+                                          Stretch="Uniform"
+                                          Margin="0,0,8,0"
+                                          VerticalAlignment="Center"/>
+                                    <TextBlock Text="{utilities:Loc SettingsOpenLogs}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Style="{StaticResource SecondaryButton}" 
+                                    Margin="0,0,12,12"
+                                    Click="CleanTemp_Click">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Path Data="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
+                                          Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                          Width="14" Height="14"
+                                          Stretch="Uniform"
+                                          Margin="0,0,8,0"
+                                          VerticalAlignment="Center"/>
+                                    <TextBlock Text="{utilities:Loc SettingsCleanTemp}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </WrapPanel>
                     </StackPanel>
-
-                    <Button Style="{StaticResource SecondaryButton}" 
-                            Content="📁 Відкрити папку"
-                            HorizontalAlignment="Left"
-                            Height="40"
-                            Margin="0,0,0,12"
-                            Click="OpenLogs_Click"/>
-
-                    <Button Style="{StaticResource SecondaryButton}" 
-                            Content="🗑 Очистити тимчасові"
-                            HorizontalAlignment="Left"
-                            Height="40"
-                            Click="CleanTemp_Click"/>
-                </StackPanel>
-            </Border>
-        </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </UserControl>

@@ -7,7 +7,7 @@ namespace ReduxInstaller.Services
     public class AppSettings
     {
         public string? GtaVPath { get; set; }
-        public string Language { get; set; } = "ru-RU";
+        public string Language { get; set; } = "uk-UA";
     }
 
     public class SettingsService

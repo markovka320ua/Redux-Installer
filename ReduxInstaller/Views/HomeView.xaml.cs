@@ -1,4 +1,6 @@
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using ReduxInstaller.Services;
 
 namespace ReduxInstaller.Views
@@ -11,7 +13,7 @@ namespace ReduxInstaller.Views
             Loaded += HomeView_Loaded;
         }
 
-        private void HomeView_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        private void HomeView_Loaded(object sender, RoutedEventArgs e)
         {
             UpdateGtaVStatus();
         }
@@ -28,35 +30,27 @@ namespace ReduxInstaller.Views
                 {
                     GtaVStatusText.Text = LocalizationService.Instance.GetString("HomeGtaVFound");
                     GtaVPathText.Text = gtaVPath;
-                }
-                else
-                {
-                    GtaVStatusText.Text = LocalizationService.Instance.GetString("HomeGtaVPathNotSet");
-                    GtaVPathText.Text = "";
+                    StatusDot.Fill = (Brush)FindResource("SuccessBrush");
+                    return;
                 }
             }
-            else
-            {
-                GtaVStatusText.Text = LocalizationService.Instance.GetString("HomeGtaVPathNotSet");
-                GtaVPathText.Text = "";
-            }
+
+            GtaVStatusText.Text = LocalizationService.Instance.GetString("HomeGtaVPathNotSet");
+            GtaVPathText.Text = "";
+            StatusDot.Fill = (Brush)FindResource("WarningBrush");
         }
 
-        private void InstallButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void InstallButton_Click(object sender, RoutedEventArgs e)
         {
-            // Navigate to Install view
-            var mainWindow = System.Windows.Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
+            if (Application.Current.MainWindow is MainWindow mainWindow)
             {
                 mainWindow.NavigateToInstall();
             }
         }
 
-        private void ChangeLocation_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void ChangeLocation_Click(object sender, RoutedEventArgs e)
         {
-            // Navigate to Settings view
-            var mainWindow = System.Windows.Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
+            if (Application.Current.MainWindow is MainWindow mainWindow)
             {
                 mainWindow.NavigateToSettings();
             }

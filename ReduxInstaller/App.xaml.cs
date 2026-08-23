@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using ReduxInstaller.Services;
 using ReduxInstaller.Views;
 
@@ -15,9 +15,15 @@ public partial class App : Application
 
         // Initialize services
         LoggingService.Instance.Info("Application starting");
+
+        var settingsService = SettingsService.Instance;
+        var savedLanguage = settingsService.GetLanguage();
+        if (!string.IsNullOrEmpty(savedLanguage))
+        {
+            LocalizationService.Instance.SetLanguage(savedLanguage);
+        }
         
         // Check if GTA V path is configured
-        var settingsService = SettingsService.Instance;
         if (!settingsService.IsGtaVPathSet())
         {
             LoggingService.Instance.Info("GTA V path not configured, showing selection dialog");
