@@ -1,24 +1,105 @@
 using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace ReduxInstaller.Models
 {
-    public class DownloadTask
+    public class DownloadTask : INotifyPropertyChanged
     {
+        private string _url = string.Empty;
+        private string _fileName = string.Empty;
+        private string _destinationPath = string.Empty;
+        private ActiveDownloadStatus _status = ActiveDownloadStatus.Idle;
+        private long _bytesDownloaded;
+        private long _totalBytes;
+        private double _progressPercentage;
+        private double _downloadSpeed;
+        private TimeSpan? _timeRemaining;
+        private DateTime _startTime;
+        private DateTime? _endTime;
+        private string? _errorMessage;
+        private CancellationTokenSource? _cancellationTokenSource;
+
         public string Id { get; set; } = Guid.NewGuid().ToString();
-        public string Url { get; set; } = string.Empty;
-        public string FileName { get; set; } = string.Empty;
-        public string DestinationPath { get; set; } = string.Empty;
-        public ActiveDownloadStatus Status { get; set; } = ActiveDownloadStatus.Idle;
-        public long BytesDownloaded { get; set; }
-        public long TotalBytes { get; set; }
-        public double ProgressPercentage { get; set; }
-        public double DownloadSpeed { get; set; }
-        public TimeSpan? TimeRemaining { get; set; }
-        public DateTime StartTime { get; set; }
-        public DateTime? EndTime { get; set; }
-        public string? ErrorMessage { get; set; }
-        public CancellationTokenSource? CancellationTokenSource { get; set; }
+        
+        public string Url
+        {
+            get => _url;
+            set { _url = value; OnPropertyChanged(); }
+        }
+        
+        public string FileName
+        {
+            get => _fileName;
+            set { _fileName = value; OnPropertyChanged(); }
+        }
+        
+        public string DestinationPath
+        {
+            get => _destinationPath;
+            set { _destinationPath = value; OnPropertyChanged(); }
+        }
+        
+        public ActiveDownloadStatus Status
+        {
+            get => _status;
+            set { _status = value; OnPropertyChanged(); OnPropertyChanged(nameof(StatusIcon)); OnPropertyChanged(nameof(StatusText)); }
+        }
+        
+        public long BytesDownloaded
+        {
+            get => _bytesDownloaded;
+            set { _bytesDownloaded = value; OnPropertyChanged(); OnPropertyChanged(nameof(DownloadedSize)); }
+        }
+        
+        public long TotalBytes
+        {
+            get => _totalBytes;
+            set { _totalBytes = value; OnPropertyChanged(); OnPropertyChanged(nameof(TotalSize)); }
+        }
+        
+        public double ProgressPercentage
+        {
+            get => _progressPercentage;
+            set { _progressPercentage = value; OnPropertyChanged(); }
+        }
+        
+        public double DownloadSpeed
+        {
+            get => _downloadSpeed;
+            set { _downloadSpeed = value; OnPropertyChanged(); OnPropertyChanged(nameof(SpeedText)); }
+        }
+        
+        public TimeSpan? TimeRemaining
+        {
+            get => _timeRemaining;
+            set { _timeRemaining = value; OnPropertyChanged(); OnPropertyChanged(nameof(TimeRemainingText)); }
+        }
+        
+        public DateTime StartTime
+        {
+            get => _startTime;
+            set { _startTime = value; OnPropertyChanged(); }
+        }
+        
+        public DateTime? EndTime
+        {
+            get => _endTime;
+            set { _endTime = value; OnPropertyChanged(); }
+        }
+        
+        public string? ErrorMessage
+        {
+            get => _errorMessage;
+            set { _errorMessage = value; OnPropertyChanged(); }
+        }
+        
+        public CancellationTokenSource? CancellationTokenSource
+        {
+            get => _cancellationTokenSource;
+            set { _cancellationTokenSource = value; OnPropertyChanged(); }
+        }
 
         public string StatusIcon => Status switch
         {
@@ -67,6 +148,13 @@ namespace ReduxInstaller.Models
             if (time.TotalMinutes > 1)
                 return $"{time.Minutes}m {time.Seconds}s";
             return $"{time.Seconds}s";
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 
