@@ -120,7 +120,7 @@
                     <Button Style="{StaticResource SecondaryButton}" 
                             Content="📁 Відкрити папку"
                             HorizontalAlignment="Left"
-                            Width="180"
+                            Width="200"
                             Height="40"
                             Margin="0,0,0,12"
                             Click="OpenLogs_Click"/>
@@ -128,7 +128,7 @@
                     <Button Style="{StaticResource SecondaryButton}" 
                             Content="🗑 Очистити тимчасові"
                             HorizontalAlignment="Left"
-                            Width="180"
+                            Width="200"
                             Height="40"
                             Click="CleanTemp_Click"/>
                 </StackPanel>

@@ -25,6 +25,7 @@ namespace ReduxInstaller.Views
 
                 if (historyService.History.Count == 0)
                 {
+                    HistoryListBox.ItemsSource = null;
                     var emptyText = new TextBlock
                     {
                         Text = LocalizationService.Instance.GetString("download_empty"),
@@ -39,6 +40,7 @@ namespace ReduxInstaller.Views
             catch (Exception ex)
             {
                 LoggingService.Instance.Error("Failed to load download history", ex);
+                HistoryListBox.ItemsSource = null;
                 var errorText = new TextBlock
                 {
                     Text = "Не вдалося завантажити історію",
