@@ -29,7 +29,7 @@ namespace ReduxInstaller.Views
                 SetupNotificationType(type);
                 SetupButtons();
                 
-                // Subtle pop-in animation
+                // Subtle pop-in animation on RootBorder
                 this.Loaded += (s, e) =>
                 {
                     try
@@ -42,9 +42,10 @@ namespace ReduxInstaller.Views
                             EasingFunction = new System.Windows.Media.Animation.CubicEase { EasingMode = System.Windows.Media.Animation.EasingMode.EaseOut }
                         };
                         
-                        this.RenderTransform = new ScaleTransform(0.94, 0.94, 0.5, 0.5);
-                        this.RenderTransform.BeginAnimation(ScaleTransform.ScaleXProperty, animation);
-                        this.RenderTransform.BeginAnimation(ScaleTransform.ScaleYProperty, animation);
+                        var scaleTransform = new ScaleTransform(0.94, 0.94);
+                        RootBorder.RenderTransform = scaleTransform;
+                        scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, animation);
+                        scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, animation);
                     }
                     catch (Exception ex)
                     {

@@ -47,5 +47,6 @@ x64/
 # macOS
 .DS_Store
 
-# ZIP files
+# ZIP and Executable files
 *.zip
+*.exe

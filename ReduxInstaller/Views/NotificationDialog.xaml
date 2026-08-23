@@ -25,12 +25,14 @@
         </ResourceDictionary>
     </Window.Resources>
 
-    <Border Margin="14"
+    <Border x:Name="RootBorder"
+            Margin="14"
             Background="{StaticResource CardBrush}" 
             CornerRadius="16" 
             BorderBrush="{StaticResource BorderBrush}" 
             BorderThickness="1"
             Padding="24"
+            RenderTransformOrigin="0.5,0.5"
             MouseLeftButtonDown="Border_MouseLeftButtonDown">
         <Border.Effect>
             <DropShadowEffect Color="#000000" Opacity="0.75" BlurRadius="24" ShadowDepth="6"/>
