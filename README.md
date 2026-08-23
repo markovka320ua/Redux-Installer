@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Redux Installer](https://img.shields.io/badge/Version-1.0.4-brightgreen)
+![Redux Installer](https://img.shields.io/badge/Version-1.0.6-brightgreen)
 ![Platform](https://img.shields.io/badge/Platform-Windows-blue)
 ![License](https://img.shields.io/badge/License-MIT-orange)
 
@@ -106,7 +106,7 @@ A: Так, натисніть кнопку "Скасувати" під час з
 
 ## 🔧 Технічна інформація
 
-- **Версія:** 1.0.4
+- **Версія:** 1.0.6
 - **Фреймворк:** .NET 8
 - **Тип:** Portable (self-contained)
 - **Розмір:** ~67 MB
