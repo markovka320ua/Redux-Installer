@@ -1,0 +1,196 @@
+<UserControl x:Class="ReduxInstaller.Views.InstallView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ReduxInstaller.Views"
+             xmlns:utilities="clr-namespace:ReduxInstaller.Utilities"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="1200">
+    
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Resources/Styles/App.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,48">
+            <TextBlock Text="{utilities:Loc InstallTitle}" 
+                       FontSize="42" 
+                       FontWeight="Bold" 
+                       Foreground="{StaticResource PrimaryTextBrush}"
+                       Margin="0,0,0,12"/>
+            
+            <TextBlock Text="Введіть посилання на ZIP-архів з Redux модом" 
+                       FontSize="16" 
+                       Foreground="{StaticResource SecondaryTextBrush}"/>
+        </StackPanel>
+
+        <!-- Content -->
+        <StackPanel Grid.Row="1" MaxWidth="700">
+            <!-- URL Input Card -->
+            <Border Style="{StaticResource Card}" Margin="0,0,0,32" x:Name="UrlInputCard">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
+                        <TextBlock Text="🔗" FontSize="32" Margin="0,0,16,0"/>
+                        <TextBlock Text="Посилання на мод" 
+                                   FontSize="20" 
+                                   FontWeight="SemiBold" 
+                                   Foreground="{StaticResource PrimaryTextBrush}"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                    
+                    <TextBox x:Name="UrlTextBox" 
+                             Style="{StaticResource ModernTextBox}"
+                             Text="{utilities:Loc InstallUrlPlaceholder}"
+                             Foreground="{StaticResource MutedTextBrush}"
+                             GotFocus="UrlTextBox_GotFocus"
+                             LostFocus="UrlTextBox_LostFocus"
+                             Margin="0,0,0,24"
+                             FontSize="15"/>
+
+                    <Button x:Name="InstallButton" 
+                            Style="{StaticResource PrimaryButton}" 
+                            HorizontalAlignment="Left"
+                            Width="200"
+                            Height="48"
+                            FontSize="16"
+                            Click="InstallButton_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="⬇️" FontSize="18" Margin="0,0,12,0"/>
+                            <TextBlock Text="{utilities:Loc InstallButton}" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Border>
+
+            <!-- Progress Card (Hidden by default) -->
+            <Border Style="{StaticResource Card}" 
+                    Margin="0,0,0,32" 
+                    x:Name="ProgressCard"
+                    Visibility="Collapsed">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
+                        <TextBlock Text="📥" FontSize="32" Margin="0,0,16,0"/>
+                        <TextBlock x:Name="ProgressTitle" 
+                                   Text="{utilities:Loc DownloadProgress}" 
+                                   FontSize="20" 
+                                   FontWeight="SemiBold" 
+                                   Foreground="{StaticResource PrimaryTextBrush}"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <ProgressBar x:Name="ProgressBar" 
+                                 Style="{StaticResource ModernProgressBar}"
+                                 Margin="0,0,0,16"
+                                 Height="8"/>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
+                        <TextBlock x:Name="ProgressText" 
+                                   Text="0 / 0" 
+                                   FontSize="15" 
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource PrimaryTextBrush}"
+                                   Margin="0,0,24,0"/>
+
+                        <TextBlock x:Name="SpeedText" 
+                                   Text="" 
+                                   FontSize="13" 
+                                   Foreground="{StaticResource SecondaryTextBrush}"
+                                   Margin="0,0,16,0"/>
+
+                        <TextBlock x:Name="TimeText" 
+                                   Text="" 
+                                   FontSize="13" 
+                                   Foreground="{StaticResource SecondaryTextBrush}"/>
+                    </StackPanel>
+
+                    <Button x:Name="CancelButton" 
+                            Style="{StaticResource SecondaryButton}" 
+                            Width="140"
+                            Height="40"
+                            HorizontalAlignment="Left"
+                            Click="CancelButton_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="✕" FontSize="16" Margin="0,0,8,0"/>
+                            <TextBlock Text="{utilities:Loc InstallCancelButton}"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Border>
+
+            <!-- Success Card (Hidden by default) -->
+            <Border Style="{StaticResource Card}" 
+                    Margin="0,0,0,32" 
+                    x:Name="SuccessCard"
+                    Visibility="Collapsed">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="✓" 
+                               FontSize="64" 
+                               Foreground="{StaticResource SuccessBrush}"
+                               Margin="0,0,0,16"
+                               HorizontalAlignment="Center"/>
+
+                    <TextBlock Text="{utilities:Loc InstallComplete}" 
+                               FontSize="24" 
+                               FontWeight="SemiBold" 
+                               Foreground="{StaticResource PrimaryTextBrush}"
+                               Margin="0,0,0,8"
+                               HorizontalAlignment="Center"/>
+
+                    <TextBlock Text="{utilities:Loc InstallCompleteDescription}" 
+                               FontSize="14" 
+                               Foreground="{StaticResource SecondaryTextBrush}"
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,24"
+                               HorizontalAlignment="Center"
+                               MaxWidth="400"/>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Style="{StaticResource PrimaryButton}" 
+                                Content="{utilities:Loc InstallDoneButton}"
+                                Width="120"
+                                Height="40"
+                                Margin="0,0,8,0"
+                                Click="DoneButton_Click"/>
+
+                        <Button Style="{StaticResource SecondaryButton}" 
+                                Content="{utilities:Loc InstallOpenFolder}"
+                                Width="140"
+                                Height="40"
+                                Click="OpenFolderButton_Click"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Info Card -->
+            <Border Style="{StaticResource Card}" Background="#1A1A1A">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                        <TextBlock Text="💡" FontSize="24" Margin="0,0,12,0"/>
+                        <TextBlock Text="Порада" 
+                                   FontSize="16" 
+                                   FontWeight="SemiBold" 
+                                   Foreground="{StaticResource PrimaryTextBrush}"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                    
+                    <TextBlock Text="Переконайтеся, що у вас достатньо місця на диску перед початком завантаження. ZIP-архів буде розпаковано безпосередньо в папку з GTA V." 
+                               FontSize="14" 
+                               Foreground="{StaticResource SecondaryTextBrush}"
+                               TextWrapping="Wrap"
+                               LineHeight="22"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </Grid>
+</UserControl>

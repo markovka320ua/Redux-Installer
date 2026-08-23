@@ -1,0 +1,129 @@
+<UserControl x:Class="ReduxInstaller.Views.AboutView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ReduxInstaller.Views"
+             xmlns:utilities="clr-namespace:ReduxInstaller.Utilities"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="1200">
+    
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Resources/Styles/App.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,48">
+            <TextBlock Text="{utilities:Loc AboutTitle}" 
+                       FontSize="42" 
+                       FontWeight="Bold" 
+                       Foreground="{StaticResource PrimaryTextBrush}"
+                       Margin="0,0,0,12"/>
+            
+            <TextBlock Text="Інформація про програму та розробника" 
+                       FontSize="16" 
+                       Foreground="{StaticResource SecondaryTextBrush}"/>
+        </StackPanel>
+
+        <!-- Content -->
+        <StackPanel Grid.Row="1" MaxWidth="700">
+            <!-- About Card -->
+            <Border Style="{StaticResource Card}" Margin="0,0,0,32">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,32">
+                        <TextBlock Text="ℹ️" FontSize="48" Margin="0,0,20,0"/>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="Redux Installer" 
+                                       FontSize="28" 
+                                       FontWeight="Bold" 
+                                       Foreground="{StaticResource PrimaryTextBrush}"
+                                       Margin="0,0,0,8"/>
+                            <TextBlock Text="v1.0.1" 
+                                       FontSize="14" 
+                                       Foreground="{StaticResource AccentBrush}"
+                                       FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </StackPanel>
+                    
+                    <TextBlock Text="{utilities:Loc AboutDescription}" 
+                               FontSize="15" 
+                               Foreground="{StaticResource SecondaryTextBrush}"
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,32"
+                               LineHeight="24"/>
+
+                    <!-- Divider -->
+                    <Border Height="1" 
+                            Background="{StaticResource BorderBrush}" 
+                            Margin="0,0,0,32"/>
+
+                    <!-- Developer Section -->
+                    <StackPanel Margin="0,0,0,32">
+                        <TextBlock Text="{utilities:Loc about_developer}" 
+                                   FontSize="16" 
+                                   FontWeight="SemiBold" 
+                                   Foreground="{StaticResource PrimaryTextBrush}"
+                                   Margin="0,0,0,16"/>
+
+                        <Button Style="{StaticResource SecondaryButton}" 
+                                HorizontalAlignment="Left"
+                                Padding="20,12"
+                                Click="DeveloperButton_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="✈️" FontSize="18" Margin="0,0,12,0"/>
+                                <TextBlock Text="markovka320" FontWeight="SemiBold" FontSize="15"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+
+                    <!-- Divider -->
+                    <Border Height="1" 
+                            Background="{StaticResource BorderBrush}" 
+                            Margin="0,0,0,32"/>
+
+                    <!-- Tech Info -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Технології:" 
+                                       FontSize="13" 
+                                       FontWeight="SemiBold" 
+                                       Foreground="{StaticResource PrimaryTextBrush}"
+                                       Margin="0,0,0,8"/>
+
+                            <TextBlock Text=".NET 8, WPF, C#" 
+                                       FontSize="14" 
+                                       Foreground="{StaticResource SecondaryTextBrush}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="Платформа:" 
+                                       FontSize="13" 
+                                       FontWeight="SemiBold" 
+                                       Foreground="{StaticResource PrimaryTextBrush}"
+                                       Margin="0,0,0,8"/>
+
+                            <TextBlock Text="Windows Desktop" 
+                                       FontSize="14" 
+                                       Foreground="{StaticResource SecondaryTextBrush}"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </Grid>
+</UserControl>

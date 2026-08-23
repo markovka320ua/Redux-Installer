@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- Application -->
+  <data name="AppName" xml:space="preserve">
+    <value>Redux Installer</value>
+  </data>
+  
+  <!-- Navigation -->
+  <data name="NavHome" xml:space="preserve">
+    <value>Головна</value>
+  </data>
+  <data name="NavInstall" xml:space="preserve">
+    <value>Встановлення Redux</value>
+  </data>
+  <data name="NavSettings" xml:space="preserve">
+    <value>Налаштування</value>
+  </data>
+  <data name="NavAbout" xml:space="preserve">
+    <value>Про програму</value>
+  </data>
+  
+  <!-- Home Page -->
+  <data name="HomeTitle" xml:space="preserve">
+    <value>Redux Installer</value>
+  </data>
+  <data name="HomeSubtitle" xml:space="preserve">
+    <value>Швидке встановлення Redux для Grand Theft Auto V</value>
+  </data>
+  <data name="HomeCardTitle" xml:space="preserve">
+    <value>Готові встановити Redux?</value>
+  </data>
+  <data name="HomeCardDescription" xml:space="preserve">
+    <value>Вкажіть пряме посилання на ZIP-архів Redux, а програма автоматично завантажить та встановить його у вашу GTA V.</value>
+  </data>
+  <data name="HomeInstallButton" xml:space="preserve">
+    <value>Встановити Redux</value>
+  </data>
+  <data name="HomeGtaVStatus" xml:space="preserve">
+    <value>GTA V</value>
+  </data>
+  <data name="HomeGtaVPathNotSet" xml:space="preserve">
+    <value>Шлях не налаштовано</value>
+  </data>
+  <data name="HomeGtaVFound" xml:space="preserve">
+    <value>GTA V знайдено</value>
+  </data>
+  
+  <!-- Install Page -->
+  <data name="InstallTitle" xml:space="preserve">
+    <value>Встановлення Redux</value>
+  </data>
+  <data name="InstallSubtitle" xml:space="preserve">
+    <value>Завантажте Redux за прямим посиланням</value>
+  </data>
+  <data name="InstallUrlPlaceholder" xml:space="preserve">
+    <value>Вставте пряме посилання на ZIP-файл...</value>
+  </data>
+  <data name="InstallButton" xml:space="preserve">
+    <value>Завантажити та встановити</value>
+  </data>
+  <data name="InstallCancelButton" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
+  
+  <!-- Download Progress -->
+  <data name="DownloadProgress" xml:space="preserve">
+    <value>Завантаження Redux...</value>
+  </data>
+  <data name="DownloadComplete" xml:space="preserve">
+    <value>Завантаження завершено</value>
+  </data>
+  <data name="DownloadCancelled" xml:space="preserve">
+    <value>Завантаження скасовано.</value>
+  </data>
+  <data name="DownloadSpeed" xml:space="preserve">
+    <value>Швидкість</value>
+  </data>
+  <data name="DownloadTimeRemaining" xml:space="preserve">
+    <value>Залишилося часу</value>
+  </data>
+  <data name="Downloaded" xml:space="preserve">
+    <value>Завантажено</value>
+  </data>
+  
+  <!-- Installation Progress -->
+  <data name="InstallProgress" xml:space="preserve">
+    <value>Встановлення Redux...</value>
+  </data>
+  <data name="InstallPreparing" xml:space="preserve">
+    <value>Підготовка до встановлення...</value>
+  </data>
+  <data name="InstallComplete" xml:space="preserve">
+    <value>Redux успішно встановлено</value>
+  </data>
+  <data name="InstallCompleteDescription" xml:space="preserve">
+    <value>Файли Redux було встановлено у вашу GTA V.</value>
+  </data>
+  <data name="InstallDoneButton" xml:space="preserve">
+    <value>Готово</value>
+  </data>
+  <data name="InstallOpenFolder" xml:space="preserve">
+    <value>Відкрити папку</value>
+  </data>
+  <data name="InstallGtaVFolder" xml:space="preserve">
+    <value>Папка GTA V</value>
+  </data>
+  
+  <!-- GTA V Selection -->
+  <data name="GtaVSelectionTitle" xml:space="preserve">
+    <value>Де встановлена GTA V?</value>
+  </data>
+  <data name="GtaVSelectionDescription" xml:space="preserve">
+    <value>Вкажіть папку, у якій знаходиться GTA5.exe.</value>
+  </data>
+  <data name="GtaVSelectButton" xml:space="preserve">
+    <value>Вибрати папку</value>
+  </data>
+  <data name="GtaVAutoDetectButton" xml:space="preserve">
+    <value>Знайти GTA V автоматично</value>
+  </data>
+  <data name="GtaVManualSelectButton" xml:space="preserve">
+    <value>Вибрати папку вручну</value>
+  </data>
+  
+  <!-- Error Messages -->
+  <data name="ErrorUrlEmpty" xml:space="preserve">
+    <value>Вставте посилання на ZIP-файл Redux.</value>
+  </data>
+  <data name="ErrorUrlInvalid" xml:space="preserve">
+    <value>Вказано некоректне посилання.</value>
+  </data>
+  <data name="ErrorServerConnection" xml:space="preserve">
+    <value>Не вдалося підключитися до сервера.</value>
+  </data>
+  <data name="ErrorDownloadFailed" xml:space="preserve">
+    <value>Не вдалося завантажити архів.</value>
+  </data>
+  <data name="ErrorZipCorrupted" xml:space="preserve">
+    <value>Архів Redux пошкоджений або має неправильний формат.</value>
+  </data>
+  <data name="ErrorGtaVNotFound" xml:space="preserve">
+    <value>Не вдалося знайти GTA V.</value>
+  </data>
+  <data name="ErrorGtaVAccessDenied" xml:space="preserve">
+    <value>Відсутній доступ до папки GTA V.</value>
+  </data>
+  <data name="ErrorDiskSpace" xml:space="preserve">
+    <value>Недостатньо вільного місця на диску для встановлення Redux.</value>
+  </data>
+  <data name="ErrorInstallationCancelled" xml:space="preserve">
+    <value>Встановлення було скасовано.</value>
+  </data>
+  <data name="ErrorExtractionFailed" xml:space="preserve">
+    <value>Не вдалося розпакувати архів.</value>
+  </data>
+  <data name="ErrorCheckConnection" xml:space="preserve">
+    <value>Перевірте підключення до інтернету.</value>
+  </data>
+  <data name="ErrorFilesExist" xml:space="preserve">
+    <value>Деякі файли вже існують.</value>
+  </data>
+  <data name="ErrorFilesExistDescription" xml:space="preserve">
+    <value>Під час встановлення вони можуть бути замінені.</value>
+  </data>
+  <data name="ErrorContinue" xml:space="preserve">
+    <value>Продовжити</value>
+  </data>
+  
+  <!-- Settings -->
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Налаштування</value>
+  </data>
+  <data name="SettingsGtaVPath" xml:space="preserve">
+    <value>Шлях до GTA V</value>
+  </data>
+  <data name="SettingsChangePath" xml:space="preserve">
+    <value>Змінити</value>
+  </data>
+  <data name="SettingsLanguage" xml:space="preserve">
+    <value>Мова інтерфейсу</value>
+  </data>
+  <data name="SettingsOpenLogs" xml:space="preserve">
+    <value>Відкрити папку з логами</value>
+  </data>
+  <data name="SettingsCleanTemp" xml:space="preserve">
+    <value>Очистити тимчасові файли</value>
+  </data>
+  
+  <!-- About -->
+  <data name="AboutTitle" xml:space="preserve">
+    <value>Про Redux Installer</value>
+  </data>
+  <data name="AboutDescription" xml:space="preserve">
+    <value>Інструмент для швидкого встановлення Redux у Grand Theft Auto V.</value>
+  </data>
+  <data name="AboutVersion" xml:space="preserve">
+    <value>Версія</value>
+  </data>
+  
+  <!-- Window -->
+  <data name="WindowCloseConfirmTitle" xml:space="preserve">
+    <value>Встановлення ще не завершено.</value>
+  </data>
+  <data name="WindowCloseConfirmMessage" xml:space="preserve">
+    <value>Ви дійсно хочете закрити Redux Installer?</value>
+  </data>
+  <data name="WindowClose" xml:space="preserve">
+    <value>Закрити</value>
+  </data>
+  <data name="WindowContinue" xml:space="preserve">
+    <value>Продовжити</value>
+  </data>
+  
+  <!-- Common -->
+  <data name="CommonOK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="CommonCancel" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
+  <data name="CommonYes" xml:space="preserve">
+    <value>Так</value>
+  </data>
+  <data name="CommonNo" xml:space="preserve">
+    <value>Ні</value>
+  </data>
+</root>

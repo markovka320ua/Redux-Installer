@@ -1,0 +1,86 @@
+<Window x:Class="ReduxInstaller.Views.GtaVSelectionDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ReduxInstaller.Views"
+        xmlns:utilities="clr-namespace:ReduxInstaller.Utilities"
+        mc:Ignorable="d"
+        Title="Redux Installer" 
+        Height="400" 
+        Width="600"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+    
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Resources/Styles/App.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Border Background="{StaticResource BackgroundBrush}" 
+            CornerRadius="8"
+            BorderBrush="{StaticResource BorderBrush}" 
+            BorderThickness="1">
+        <Grid>
+            <!-- Header -->
+            <Grid Height="48" 
+                  VerticalAlignment="Top" 
+                  Background="{StaticResource SidebarBrush}">
+                <TextBlock Text="{utilities:Loc GtaVSelectionTitle}" 
+                           FontSize="16" 
+                           FontWeight="SemiBold"
+                           Foreground="{StaticResource PrimaryTextBrush}"
+                           VerticalAlignment="Center"
+                           Margin="24,0"/>
+            </Grid>
+
+            <!-- Content -->
+            <StackPanel Margin="32,48,32,32">
+                <TextBlock Text="{utilities:Loc GtaVSelectionDescription}" 
+                           FontSize="14" 
+                           Foreground="{StaticResource SecondaryTextBrush}"
+                           TextWrapping="Wrap"
+                           Margin="0,0,0,32"/>
+
+                <Button x:Name="AutoDetectButton" 
+                        Style="{StaticResource SecondaryButton}" 
+                        Content="{utilities:Loc GtaVAutoDetectButton}"
+                        Width="200"
+                        Height="40"
+                        HorizontalAlignment="Left"
+                        Margin="0,0,0,12"
+                        Click="AutoDetectButton_Click"/>
+
+                <Button x:Name="ManualSelectButton" 
+                        Style="{StaticResource PrimaryButton}" 
+                        Content="{utilities:Loc GtaVManualSelectButton}"
+                        Width="200"
+                        Height="40"
+                        HorizontalAlignment="Left"
+                        Margin="0,0,0,24"
+                        Click="ManualSelectButton_Click"/>
+
+                <TextBlock x:Name="StatusText" 
+                           Text="" 
+                           FontSize="12" 
+                           Foreground="{StaticResource MutedTextBrush}"
+                           TextWrapping="Wrap"
+                           Margin="0,0,0,24"/>
+
+                <Button x:Name="CancelButton" 
+                        Style="{StaticResource SecondaryButton}" 
+                        Content="{utilities:Loc CommonCancel}"
+                        Width="120"
+                        Height="36"
+                        HorizontalAlignment="Left"
+                        Click="CancelButton_Click"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

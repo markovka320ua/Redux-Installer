@@ -1,0 +1,240 @@
+﻿<Window x:Class="ReduxInstaller.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ReduxInstaller"
+        xmlns:utilities="clr-namespace:ReduxInstaller.Utilities"
+        mc:Ignorable="d"
+        Title="Redux Installer" 
+        Height="850" 
+        Width="1440"
+        MinHeight="650" 
+        MinWidth="1000"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        WindowStartupLocation="CenterScreen">
+    
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Styles/App.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Border CornerRadius="8"
+            BorderBrush="{StaticResource BorderBrush}" 
+            BorderThickness="1">
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#151515" Offset="0"/>
+                <GradientStop Color="#1a1a1a" Offset="1"/>
+            </LinearGradientBrush>
+        </Border.Background>
+        <Grid>
+            <!-- Custom Title Bar -->
+            <Grid Height="32" 
+                  VerticalAlignment="Top" 
+                  Background="{StaticResource SidebarBrush}"
+                  Panel.ZIndex="100">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- App Title -->
+                <TextBlock Grid.Column="0" 
+                           Text="{utilities:Loc AppName}" 
+                           FontSize="12" 
+                           FontWeight="SemiBold"
+                           Foreground="{StaticResource PrimaryTextBrush}"
+                           VerticalAlignment="Center"
+                           Margin="16,0"/>
+
+                <!-- Window Controls -->
+                <StackPanel Grid.Column="2" 
+                            Orientation="Horizontal" 
+                            HorizontalAlignment="Right">
+                    <Button Width="46" 
+                            Height="32" 
+                            Background="Transparent" 
+                            BorderThickness="0"
+                            Foreground="{StaticResource SecondaryTextBrush}"
+                            Content="—"
+                            FontSize="16"
+                            Cursor="Hand"
+                            Click="MinimizeButton_Click"
+                            WindowChrome.IsHitTestVisibleInChrome="True">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}" 
+                                                    Width="{TemplateBinding Width}" 
+                                                    Height="{TemplateBinding Height}">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#2A2A2A"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Button Width="46" 
+                            Height="32" 
+                            Background="Transparent" 
+                            BorderThickness="0"
+                            Foreground="{StaticResource SecondaryTextBrush}"
+                            Content="□"
+                            FontSize="12"
+                            Cursor="Hand"
+                            Click="MaximizeButton_Click"
+                            WindowChrome.IsHitTestVisibleInChrome="True">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}" 
+                                                    Width="{TemplateBinding Width}" 
+                                                    Height="{TemplateBinding Height}">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#2A2A2A"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Button Width="46" 
+                            Height="32" 
+                            Background="Transparent" 
+                            BorderThickness="0"
+                            Foreground="{StaticResource SecondaryTextBrush}"
+                            Content="✕"
+                            FontSize="14"
+                            Cursor="Hand"
+                            Click="CloseButton_Click"
+                            WindowChrome.IsHitTestVisibleInChrome="True">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}" 
+                                                    Width="{TemplateBinding Width}" 
+                                                    Height="{TemplateBinding Height}">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#E53935"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <!-- Main Content -->
+            <Grid Margin="0,32,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="180"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Sidebar -->
+                <Border Grid.Column="0" 
+                        Background="{StaticResource SidebarBrush}" 
+                        BorderBrush="{StaticResource BorderBrush}" 
+                        BorderThickness="0,1,1,0">
+                    <StackPanel Margin="0,24,0,0">
+                        <!-- App Branding -->
+                        <StackPanel Margin="24,0,24,32">
+                            <TextBlock Text="Redux" 
+                                       FontSize="22" 
+                                       FontWeight="Bold" 
+                                       Foreground="{StaticResource AccentBrush}"
+                                       Margin="0,0,0,2"/>
+                            <TextBlock Text="INSTALLER" 
+                                       FontSize="12" 
+                                       FontWeight="SemiBold" 
+                                       Foreground="{StaticResource SecondaryTextBrush}"
+                                       Margin="0,0,0,8"/>
+                            <Border Height="1" 
+                                    Background="{StaticResource BorderBrush}" 
+                                    Margin="0,0,0,8"/>
+                        </StackPanel>
+
+                        <!-- Navigation -->
+                        <Button x:Name="HomeNavButton" 
+                                Style="{StaticResource NavButton}"
+                                Click="HomeNavButton_Click"
+                                Margin="0,4,0,4">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="🏠" FontSize="20" Margin="0,0,12,0"/>
+                                <TextBlock Text="{utilities:Loc NavHome}" FontSize="14"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button x:Name="InstallNavButton" 
+                                Style="{StaticResource NavButton}"
+                                Click="InstallNavButton_Click"
+                                Margin="0,4,0,4">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="⬇️" FontSize="20" Margin="0,0,12,0"/>
+                                <TextBlock Text="{utilities:Loc NavInstall}" FontSize="14"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button x:Name="SettingsNavButton" 
+                                Style="{StaticResource NavButton}"
+                                Click="SettingsNavButton_Click"
+                                Margin="0,4,0,4">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="⚙️" FontSize="20" Margin="0,0,12,0"/>
+                                <TextBlock Text="{utilities:Loc NavSettings}" FontSize="14"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button x:Name="AboutNavButton" 
+                                Style="{StaticResource NavButton}"
+                                Click="AboutNavButton_Click"
+                                Margin="0,4,0,4">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="ℹ️" FontSize="20" Margin="0,0,12,0"/>
+                                <TextBlock Text="{utilities:Loc NavAbout}" FontSize="14"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Border>
+
+                <!-- Content Area -->
+                <Border Grid.Column="1" 
+                        Background="{StaticResource BackgroundBrush}"
+                        Padding="32">
+                    <ContentControl x:Name="ContentArea"/>
+                </Border>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>
