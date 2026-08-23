@@ -30,7 +30,7 @@
 ## 📸 Скриншоты
 
 <div align="center">
-  <img src="https://via.placeholder.com/800x500/1C1C1C/E91E63?text=Redux+Installer+Screenshot" alt="Redux Installer Interface"/>
+  <img src="https://i.ibb.co/SwFPNmbM/image.png" alt="Redux Installer Interface"/>
 </div>
 
 ---
