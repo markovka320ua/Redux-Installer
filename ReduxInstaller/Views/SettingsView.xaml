@@ -36,7 +36,7 @@
         </StackPanel>
 
         <!-- Content -->
-        <StackPanel Grid.Row="1" MaxWidth="700">
+        <StackPanel Grid.Row="1" MaxWidth="800">
             <!-- GTA V Path Section -->
             <Border Style="{StaticResource Card}" Margin="0,0,0,32">
                 <StackPanel>
@@ -72,7 +72,7 @@
                         <Button Grid.Column="1" 
                                 Style="{StaticResource SecondaryButton}" 
                                 Content="{utilities:Loc SettingsChangePath}"
-                                Width="140"
+                                Width="150"
                                 Height="40"
                                 Click="ChangeGtaVPath_Click"/>
                     </Grid>
@@ -92,7 +92,7 @@
                     </StackPanel>
 
                     <ComboBox x:Name="LanguageComboBox" 
-                              Width="200" 
+                              Width="220" 
                               Height="40"
                               HorizontalAlignment="Left"
                               Style="{StaticResource CustomComboBox}"
@@ -120,7 +120,7 @@
                     <Button Style="{StaticResource SecondaryButton}" 
                             Content="📁 Відкрити папку"
                             HorizontalAlignment="Left"
-                            Width="160"
+                            Width="180"
                             Height="40"
                             Margin="0,0,0,12"
                             Click="OpenLogs_Click"/>
@@ -128,7 +128,7 @@
                     <Button Style="{StaticResource SecondaryButton}" 
                             Content="🗑 Очистити тимчасові"
                             HorizontalAlignment="Left"
-                            Width="160"
+                            Width="180"
                             Height="40"
                             Click="CleanTemp_Click"/>
                 </StackPanel>

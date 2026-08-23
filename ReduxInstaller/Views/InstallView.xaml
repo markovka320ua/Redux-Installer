@@ -57,8 +57,7 @@
                              LostFocus="UrlTextBox_LostFocus"
                              Margin="0,0,0,24"
                              FontSize="15"
-                             Padding="18,10"
-                             Height="40"/>
+                             Height="50"/>
 
                     <Button x:Name="InstallButton" 
                             Style="{StaticResource PrimaryButton}" 

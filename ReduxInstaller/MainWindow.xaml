@@ -26,14 +26,15 @@
 
     <Border CornerRadius="12"
             BorderBrush="{StaticResource BorderBrush}" 
-            BorderThickness="1">
-        <Border.Background>
-            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                <GradientStop Color="#121212" Offset="0"/>
-                <GradientStop Color="#151515" Offset="1"/>
-            </LinearGradientBrush>
-        </Border.Background>
+            BorderThickness="1"
+            Background="Transparent">
         <Grid>
+            <Grid.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#121212" Offset="0"/>
+                    <GradientStop Color="#151515" Offset="1"/>
+                </LinearGradientBrush>
+            </Grid.Background>
             <!-- Custom Title Bar -->
             <Grid Height="32" 
                   VerticalAlignment="Top" 

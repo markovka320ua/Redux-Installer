@@ -121,7 +121,7 @@
 
                     <Button Style="{StaticResource SecondaryButton}" 
                             Content="Змінити шлях"
-                            Width="140"
+                            Width="150"
                             Height="36"
                             HorizontalAlignment="Left"
                             Click="ChangeLocation_Click"/>

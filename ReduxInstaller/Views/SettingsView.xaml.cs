@@ -93,25 +93,31 @@ namespace ReduxInstaller.Views
                 if (!string.IsNullOrEmpty(languageCode))
                 {
                     var settingsService = SettingsService.Instance;
-                    settingsService.SetLanguage(languageCode);
-                    LoggingService.Instance.Info($"Language changed to: {languageCode}");
+                    var currentLanguage = settingsService.GetLanguage();
                     
-                    // Show restart dialog
-                    NotificationService.Instance.ShowConfirm(
-                        LocalizationService.Instance.GetString("settings_restart_required"),
-                        "",
-                        onConfirm: () =>
-                        {
-                            // Restart application
-                            System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
-                            Application.Current.Shutdown();
-                        },
-                        onCancel: () =>
-                        {
-                            // Revert language selection if cancelled
-                            LoadSettings();
-                        }
-                    );
+                    // Only show restart dialog if language actually changed
+                    if (currentLanguage != languageCode)
+                    {
+                        settingsService.SetLanguage(languageCode);
+                        LoggingService.Instance.Info($"Language changed to: {languageCode}");
+                        
+                        // Show restart dialog
+                        NotificationService.Instance.ShowConfirm(
+                            LocalizationService.Instance.GetString("settings_restart_required"),
+                            "",
+                            onConfirm: () =>
+                            {
+                                // Restart application
+                                System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
+                                Application.Current.Shutdown();
+                            },
+                            onCancel: () =>
+                            {
+                                // Revert language selection if cancelled
+                                LoadSettings();
+                            }
+                        );
+                    }
                 }
             }
         }
