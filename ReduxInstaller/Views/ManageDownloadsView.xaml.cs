@@ -18,22 +18,34 @@ namespace ReduxInstaller.Views
 
         private void ManageDownloadsView_Loaded(object sender, RoutedEventArgs e)
         {
-            var downloadManager = DownloadManagerService.Instance;
-            downloadManager.DownloadTaskAdded += DownloadManager_DownloadTaskAdded;
-            downloadManager.DownloadTaskUpdated += DownloadManager_DownloadTaskUpdated;
-            downloadManager.DownloadTaskCompleted += DownloadManager_DownloadTaskCompleted;
-            downloadManager.DownloadTaskFailed += DownloadManager_DownloadTaskFailed;
+            try
+            {
+                var downloadManager = DownloadManagerService.Instance;
+                downloadManager.DownloadTaskAdded += DownloadManager_DownloadTaskAdded;
+                downloadManager.DownloadTaskCompleted += DownloadManager_DownloadTaskCompleted;
+                downloadManager.DownloadTaskFailed += DownloadManager_DownloadTaskFailed;
 
-            LoadActiveDownloads();
+                LoadActiveDownloads();
+            }
+            catch (Exception ex)
+            {
+                LoggingService.Instance.Error("Error loading ManageDownloadsView", ex);
+            }
         }
 
         private void ManageDownloadsView_Unloaded(object sender, RoutedEventArgs e)
         {
-            var downloadManager = DownloadManagerService.Instance;
-            downloadManager.DownloadTaskAdded -= DownloadManager_DownloadTaskAdded;
-            downloadManager.DownloadTaskUpdated -= DownloadManager_DownloadTaskUpdated;
-            downloadManager.DownloadTaskCompleted -= DownloadManager_DownloadTaskCompleted;
-            downloadManager.DownloadTaskFailed -= DownloadManager_DownloadTaskFailed;
+            try
+            {
+                var downloadManager = DownloadManagerService.Instance;
+                downloadManager.DownloadTaskAdded -= DownloadManager_DownloadTaskAdded;
+                downloadManager.DownloadTaskCompleted -= DownloadManager_DownloadTaskCompleted;
+                downloadManager.DownloadTaskFailed -= DownloadManager_DownloadTaskFailed;
+            }
+            catch (Exception ex)
+            {
+                LoggingService.Instance.Error("Error unloading ManageDownloadsView", ex);
+            }
         }
 
         private void LoadActiveDownloads()
@@ -64,22 +76,38 @@ namespace ReduxInstaller.Views
 
         private void DownloadManager_DownloadTaskAdded(object? sender, DownloadTask task)
         {
-            Dispatcher.Invoke(LoadActiveDownloads);
-        }
-
-        private void DownloadManager_DownloadTaskUpdated(object? sender, DownloadTask task)
-        {
-            // ObservableCollection auto-updates
+            if (Dispatcher.CheckAccess())
+            {
+                LoadActiveDownloads();
+            }
+            else
+            {
+                Dispatcher.InvokeAsync(LoadActiveDownloads);
+            }
         }
 
         private void DownloadManager_DownloadTaskCompleted(object? sender, DownloadTask task)
         {
-            Dispatcher.Invoke(LoadActiveDownloads);
+            if (Dispatcher.CheckAccess())
+            {
+                LoadActiveDownloads();
+            }
+            else
+            {
+                Dispatcher.InvokeAsync(LoadActiveDownloads);
+            }
         }
 
         private void DownloadManager_DownloadTaskFailed(object? sender, DownloadTask task)
         {
-            Dispatcher.Invoke(LoadActiveDownloads);
+            if (Dispatcher.CheckAccess())
+            {
+                LoadActiveDownloads();
+            }
+            else
+            {
+                Dispatcher.InvokeAsync(LoadActiveDownloads);
+            }
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)

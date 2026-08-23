@@ -4,6 +4,8 @@ using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Data;
 using ReduxInstaller.Models;
 
 namespace ReduxInstaller.Services
@@ -11,7 +13,8 @@ namespace ReduxInstaller.Services
     public class DownloadManagerService
     {
         private static DownloadManagerService? _instance;
-        private HttpClient? _httpClient;
+        private static readonly object _lock = new object();
+        private readonly HttpClient _httpClient;
         private DateTime _lastSpeedUpdate;
         private long _lastBytesDownloaded;
 
@@ -27,6 +30,15 @@ namespace ReduxInstaller.Services
         {
             _httpClient = new HttpClient();
             _httpClient.Timeout = TimeSpan.FromMinutes(30);
+
+            try
+            {
+                BindingOperations.EnableCollectionSynchronization(ActiveDownloads, _lock);
+            }
+            catch
+            {
+                // Ignore if not on UI thread yet
+            }
         }
 
         public DownloadTask CreateDownloadTask(string url, string destinationPath)
@@ -41,8 +53,14 @@ namespace ReduxInstaller.Services
                 CancellationTokenSource = new CancellationTokenSource()
             };
 
-            ActiveDownloads.Add(task);
-            DownloadTaskAdded?.Invoke(this, task);
+            RunOnUIThread(() =>
+            {
+                lock (_lock)
+                {
+                    ActiveDownloads.Add(task);
+                }
+                DownloadTaskAdded?.Invoke(this, task);
+            });
 
             return task;
         }
@@ -51,28 +69,33 @@ namespace ReduxInstaller.Services
         {
             try
             {
-                task.Status = ActiveDownloadStatus.Downloading;
-                task.StartTime = DateTime.Now;
+                RunOnUIThread(() =>
+                {
+                    task.Status = ActiveDownloadStatus.Downloading;
+                    task.StartTime = DateTime.Now;
+                });
+
                 _lastSpeedUpdate = DateTime.Now;
                 _lastBytesDownloaded = 0;
 
                 LoggingService.Instance.Info($"Starting download from: {SanitizeUrl(task.Url)}");
 
-                // Ensure destination directory exists
                 var destinationDirectory = Path.GetDirectoryName(task.DestinationPath);
                 if (!string.IsNullOrEmpty(destinationDirectory) && !Directory.Exists(destinationDirectory))
                 {
                     Directory.CreateDirectory(destinationDirectory);
                 }
 
-                using var response = await _httpClient.GetAsync(task.Url, HttpCompletionOption.ResponseHeadersRead, task.CancellationTokenSource.Token);
+                var token = task.CancellationTokenSource?.Token ?? CancellationToken.None;
+
+                using var response = await _httpClient.GetAsync(task.Url, HttpCompletionOption.ResponseHeadersRead, token);
                 response.EnsureSuccessStatusCode();
 
                 var contentHeaders = response.Content.Headers;
                 var totalBytes = contentHeaders?.ContentLength;
                 if (totalBytes is not null && totalBytes.Value > 0)
                 {
-                    task.TotalBytes = totalBytes.Value;
+                    RunOnUIThread(() => { task.TotalBytes = totalBytes.Value; });
                     LoggingService.Instance.Info($"Download started. Total size: {FormatBytes(totalBytes.Value)}");
                 }
                 else
@@ -80,43 +103,64 @@ namespace ReduxInstaller.Services
                     LoggingService.Instance.Info("Download started. Total size: unknown");
                 }
 
-                using var contentStream = await response.Content.ReadAsStreamAsync(task.CancellationTokenSource.Token);
-                using var fileStream = new FileStream(task.DestinationPath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
+                using var contentStream = await response.Content.ReadAsStreamAsync(token);
+                using var fileStream = new FileStream(task.DestinationPath, FileMode.Create, FileAccess.Write, FileShare.None, 65536, true);
 
-                var buffer = new byte[8192];
+                var buffer = new byte[65536];
                 var bytesRead = 0;
                 var totalBytesRead = 0L;
+                var lastUiUpdate = DateTime.Now;
 
-                while ((bytesRead = await contentStream.ReadAsync(buffer, task.CancellationTokenSource.Token)) > 0)
+                while ((bytesRead = await contentStream.ReadAsync(buffer, token)) > 0)
                 {
-                    await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead), task.CancellationTokenSource.Token);
+                    await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead), token);
                     totalBytesRead += bytesRead;
 
-                    // Update task
-                    task.BytesDownloaded = totalBytesRead;
-                    task.ProgressPercentage = totalBytes.HasValue && totalBytes.Value > 0 ? (double)totalBytesRead / totalBytes.Value * 100 : 0;
-                    task.DownloadSpeed = CalculateDownloadSpeed(totalBytesRead);
-                    task.TimeRemaining = CalculateTimeRemaining(totalBytesRead, totalBytes, task.DownloadSpeed);
+                    var now = DateTime.Now;
+                    if ((now - lastUiUpdate).TotalMilliseconds >= 120)
+                    {
+                        lastUiUpdate = now;
+                        var currentTotal = totalBytesRead;
+                        var currentProgress = totalBytes.HasValue && totalBytes.Value > 0 ? (double)currentTotal / totalBytes.Value * 100 : 0;
+                        var currentSpeed = CalculateDownloadSpeed(currentTotal);
+                        var currentTimeRemaining = CalculateTimeRemaining(currentTotal, totalBytes, currentSpeed);
 
-                    DownloadTaskUpdated?.Invoke(this, task);
+                        RunOnUIThread(() =>
+                        {
+                            task.BytesDownloaded = currentTotal;
+                            task.ProgressPercentage = currentProgress;
+                            task.DownloadSpeed = currentSpeed;
+                            task.TimeRemaining = currentTimeRemaining;
+                            DownloadTaskUpdated?.Invoke(this, task);
+                        });
+                    }
                 }
 
-                await fileStream.FlushAsync(task.CancellationTokenSource.Token);
+                await fileStream.FlushAsync(token);
 
-                task.Status = ActiveDownloadStatus.Completed;
-                task.EndTime = DateTime.Now;
+                RunOnUIThread(() =>
+                {
+                    task.BytesDownloaded = totalBytesRead;
+                    task.ProgressPercentage = 100;
+                    task.Status = ActiveDownloadStatus.Completed;
+                    task.EndTime = DateTime.Now;
+                    DownloadTaskCompleted?.Invoke(this, task);
+                });
+
                 LoggingService.Instance.Info($"Download completed: {task.DestinationPath}");
-                DownloadTaskCompleted?.Invoke(this, task);
-
                 return task;
             }
             catch (OperationCanceledException)
             {
-                task.Status = ActiveDownloadStatus.Cancelled;
-                task.EndTime = DateTime.Now;
+                RunOnUIThread(() =>
+                {
+                    task.Status = ActiveDownloadStatus.Cancelled;
+                    task.EndTime = DateTime.Now;
+                    DownloadTaskFailed?.Invoke(this, task);
+                });
+
                 LoggingService.Instance.Info("Download cancelled");
 
-                // Clean up partial file
                 if (File.Exists(task.DestinationPath))
                 {
                     try
@@ -129,16 +173,19 @@ namespace ReduxInstaller.Services
                     }
                 }
 
-                DownloadTaskFailed?.Invoke(this, task);
                 return task;
             }
             catch (Exception ex)
             {
-                task.Status = ActiveDownloadStatus.Failed;
-                task.ErrorMessage = ex.Message;
-                task.EndTime = DateTime.Now;
+                RunOnUIThread(() =>
+                {
+                    task.Status = ActiveDownloadStatus.Failed;
+                    task.ErrorMessage = ex.Message;
+                    task.EndTime = DateTime.Now;
+                    DownloadTaskFailed?.Invoke(this, task);
+                });
+
                 LoggingService.Instance.Error("Download failed", ex);
-                DownloadTaskFailed?.Invoke(this, task);
                 return task;
             }
         }
@@ -154,70 +201,38 @@ namespace ReduxInstaller.Services
 
         public void RemoveDownload(DownloadTask task)
         {
-            ActiveDownloads.Remove(task);
+            RunOnUIThread(() =>
+            {
+                lock (_lock)
+                {
+                    ActiveDownloads.Remove(task);
+                }
+            });
         }
 
-        private double CalculateDownloadSpeed(long totalBytesRead)
+        private void RunOnUIThread(Action action)
         {
-            var now = DateTime.Now;
-            var timeElapsed = (now - _lastSpeedUpdate).TotalSeconds;
-
-            if (timeElapsed >= 1.0) // Update speed every second
+            var app = Application.Current;
+            if (app != null && app.Dispatcher != null)
             {
-                var bytesSinceLastUpdate = totalBytesRead - _lastBytesDownloaded;
-                var speed = bytesSinceLastUpdate / timeElapsed;
-
-                _lastBytesDownloaded = totalBytesRead;
-                _lastSpeedUpdate = now;
-
-                return speed;
+                if (app.Dispatcher.CheckAccess())
+                {
+                    action();
+                }
+                else
+                {
+                    app.Dispatcher.InvokeAsync(action, System.Windows.Threading.DispatcherPriority.Normal);
+                }
             }
-
-            // Return previous speed if less than a second has passed
-            return 0;
-        }
-
-        private TimeSpan? CalculateTimeRemaining(long totalBytesRead, long? totalBytes, double currentSpeed)
-        {
-            if (!totalBytes.HasValue || totalBytes.Value == 0 || currentSpeed == 0)
-                return null;
-
-            var bytesRemaining = totalBytes.Value - totalBytesRead;
-            var secondsRemaining = bytesRemaining / currentSpeed;
-
-            return TimeSpan.FromSeconds(secondsRemaining);
-        }
-
-        private string FormatBytes(long bytes)
-        {
-            string[] sizes = { "B", "KB", "MB", "GB", "TB" };
-            int order = 0;
-            double size = bytes;
-            while (size >= 1024 && order < sizes.Length - 1)
+            else
             {
-                order++;
-                size /= 1024;
-            }
-            return $"{size:0.##} {sizes[order]}";
-        }
-
-        private string SanitizeUrl(string url)
-        {
-            try
-            {
-                var uri = new Uri(url);
-                return $"{uri.Scheme}://{uri.Host}{uri.AbsolutePath}";
-            }
-            catch
-            {
-                return "invalid_url";
+                action();
             }
         }
 
         public string GetTempFilePath()
         {
             var tempDir = Path.Combine(Path.GetTempPath(), "ReduxInstaller");
-
             try
             {
                 if (!Directory.Exists(tempDir))
@@ -260,6 +275,62 @@ namespace ReduxInstaller.Services
             catch (Exception ex)
             {
                 LoggingService.Instance.Error("Failed to clean temp files", ex);
+            }
+        }
+
+        private double CalculateDownloadSpeed(long totalBytesRead)
+        {
+            var now = DateTime.Now;
+            var timeElapsed = (now - _lastSpeedUpdate).TotalSeconds;
+
+            if (timeElapsed >= 0.5)
+            {
+                var bytesSinceLastUpdate = totalBytesRead - _lastBytesDownloaded;
+                var speed = bytesSinceLastUpdate / timeElapsed;
+
+                _lastBytesDownloaded = totalBytesRead;
+                _lastSpeedUpdate = now;
+
+                return speed;
+            }
+
+            return 0;
+        }
+
+        private TimeSpan? CalculateTimeRemaining(long totalBytesRead, long? totalBytes, double currentSpeed)
+        {
+            if (!totalBytes.HasValue || totalBytes.Value == 0 || currentSpeed == 0)
+                return null;
+
+            var bytesRemaining = totalBytes.Value - totalBytesRead;
+            var secondsRemaining = bytesRemaining / currentSpeed;
+
+            return TimeSpan.FromSeconds(secondsRemaining);
+        }
+
+        private string FormatBytes(long bytes)
+        {
+            string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+            int order = 0;
+            double size = bytes;
+            while (size >= 1024 && order < sizes.Length - 1)
+            {
+                order++;
+                size /= 1024;
+            }
+            return $"{size:0.##} {sizes[order]}";
+        }
+
+        private string SanitizeUrl(string url)
+        {
+            try
+            {
+                var uri = new Uri(url);
+                return $"{uri.Scheme}://{uri.Host}{uri.AbsolutePath}";
+            }
+            catch
+            {
+                return "invalid_url";
             }
         }
     }
