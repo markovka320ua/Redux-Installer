@@ -79,7 +79,6 @@
   "ErrorFilesExistDescription": "Деякі файли вже існують у цільовій папці. Вони будуть перезаписані.",
   "ErrorDiskSpace": "Недостатньо місця на диску",
   "GtaVSelectionTitle": "Вибрати папку GTA V",
-  "InstallUrlPlaceholder": "Введіть посилання на ZIP-файл...",
   "settings_language": "Мова інтерфейсу",
   "settings_language_uk": "Українська",
   "settings_language_en": "English",
@@ -102,5 +101,16 @@
   "download_empty": "Історія завантажень порожня",
   "status_completed": "Завершено",
   "status_failed": "Помилка",
-  "status_cancelled": "Скасовано"
+  "status_cancelled": "Скасовано",
+  "ErrorUrlEmpty": "Вставте посилання на ZIP-файл Redux.",
+  "ErrorUrlInvalid": "Вказано некоректне посилання.",
+  "ErrorServerConnection": "Не вдалося підключитися до сервера.",
+  "ErrorDownloadFailed": "Не вдалося завантажити архів.",
+  "ErrorZipCorrupted": "Архів Redux пошкоджений або має неправильний формат.",
+  "ErrorGtaVNotFound": "Не вдалося знайти GTA V.",
+  "ErrorGtaVAccessDenied": "Відсутній доступ до папки GTA V.",
+  "ErrorDiskSpace": "Недостатньо вільного місця на диску для встановлення Redux.",
+  "ErrorInstallationCancelled": "Встановлення було скасовано.",
+  "ErrorExtractionFailed": "Не вдалося розпакувати архів.",
+  "ErrorCheckConnection": "Перевірте підключення до інтернету."
 }

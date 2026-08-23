@@ -74,5 +74,16 @@
   "download_empty": "Download history is empty",
   "status_completed": "Completed",
   "status_failed": "Failed",
-  "status_cancelled": "Cancelled"
+  "status_cancelled": "Cancelled",
+  "ErrorUrlEmpty": "Please enter a link to the Redux ZIP file.",
+  "ErrorUrlInvalid": "Invalid link specified.",
+  "ErrorServerConnection": "Failed to connect to server.",
+  "ErrorDownloadFailed": "Failed to download archive.",
+  "ErrorZipCorrupted": "Redux archive is corrupted or has invalid format.",
+  "ErrorGtaVNotFound": "Failed to find GTA V.",
+  "ErrorGtaVAccessDenied": "Access denied to GTA V folder.",
+  "ErrorDiskSpace": "Not enough disk space to install Redux.",
+  "ErrorInstallationCancelled": "Installation was cancelled.",
+  "ErrorExtractionFailed": "Failed to extract archive.",
+  "ErrorCheckConnection": "Please check your internet connection."
 }

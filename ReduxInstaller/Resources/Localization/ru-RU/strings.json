@@ -74,5 +74,16 @@
   "download_empty": "История загрузок пуста",
   "status_completed": "Завершено",
   "status_failed": "Ошибка",
-  "status_cancelled": "Отменено"
+  "status_cancelled": "Отменено",
+  "ErrorUrlEmpty": "Введите ссылку на ZIP-файл Redux.",
+  "ErrorUrlInvalid": "Указана некорректная ссылка.",
+  "ErrorServerConnection": "Не удалось подключиться к серверу.",
+  "ErrorDownloadFailed": "Не удалось загрузить архив.",
+  "ErrorZipCorrupted": "Архив Redux поврежден или имеет неверный формат.",
+  "ErrorGtaVNotFound": "Не удалось найти GTA V.",
+  "ErrorGtaVAccessDenied": "Отсутствует доступ к папке GTA V.",
+  "ErrorDiskSpace": "Недостаточно места на диске для установки Redux.",
+  "ErrorInstallationCancelled": "Установка была отменена.",
+  "ErrorExtractionFailed": "Не удалось распаковать архив.",
+  "ErrorCheckConnection": "Проверьте подключение к интернету."
 }
