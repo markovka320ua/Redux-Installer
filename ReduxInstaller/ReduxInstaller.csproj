@@ -7,7 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <AssemblyName>ReduxInstaller</AssemblyName>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <StartupObject>ReduxInstaller.App</StartupObject>
   </PropertyGroup>
 
@@ -31,6 +31,23 @@
     <None Update="Resources\Styles\App.xaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Models\DownloadHistoryItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Views\ManageDownloadsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Compile Update="Views\ManageDownloadsView.xaml.cs">
+      <DependentUpon>ManageDownloadsView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
 </Project>

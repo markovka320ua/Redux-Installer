@@ -80,6 +80,11 @@ public partial class MainWindow : Window
         NavigateToAbout();
     }
 
+    private void DownloadManagerNavButton_Click(object sender, RoutedEventArgs e)
+    {
+        NavigateToDownloadManager();
+    }
+
     public void NavigateToHome()
     {
         SetActiveNavButton(HomeNavButton);
@@ -104,6 +109,22 @@ public partial class MainWindow : Window
         ContentArea.Content = new AboutView();
     }
 
+    public void NavigateToDownloadManager()
+    {
+        SetActiveNavButton(DownloadManagerNavButton);
+        ContentArea.Content = new ManageDownloadsView();
+    }
+
+    public void ShowDownloadManagerButton()
+    {
+        DownloadManagerNavButton.Visibility = Visibility.Visible;
+    }
+
+    public void HideDownloadManagerButton()
+    {
+        DownloadManagerNavButton.Visibility = Visibility.Collapsed;
+    }
+
     private void SetActiveNavButton(System.Windows.Controls.Button activeButton)
     {
         // Reset all nav buttons to default style
@@ -111,6 +132,7 @@ public partial class MainWindow : Window
         InstallNavButton.Style = (System.Windows.Style)Resources["NavButton"];
         SettingsNavButton.Style = (System.Windows.Style)Resources["NavButton"];
         AboutNavButton.Style = (System.Windows.Style)Resources["NavButton"];
+        DownloadManagerNavButton.Style = (System.Windows.Style)Resources["NavButton"];
 
         // Set active button style
         activeButton.Style = (System.Windows.Style)Resources["ActiveNavButton"];

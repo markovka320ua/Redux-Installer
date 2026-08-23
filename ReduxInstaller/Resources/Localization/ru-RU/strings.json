@@ -71,5 +71,8 @@
   "download_completed": "Завершено",
   "download_failed": "Ошибка",
   "download_cancelled": "Отменено",
-  "download_empty": "История загрузок пуста"
+  "download_empty": "История загрузок пуста",
+  "status_completed": "Завершено",
+  "status_failed": "Ошибка",
+  "status_cancelled": "Отменено"
 }

@@ -71,5 +71,8 @@
   "download_completed": "Completed",
   "download_failed": "Failed",
   "download_cancelled": "Cancelled",
-  "download_empty": "Download history is empty"
+  "download_empty": "Download history is empty",
+  "status_completed": "Completed",
+  "status_failed": "Failed",
+  "status_cancelled": "Cancelled"
 }
