@@ -17,6 +17,7 @@ namespace ReduxInstaller.Services
         private readonly HttpClient _httpClient;
         private DateTime _lastSpeedUpdate;
         private long _lastBytesDownloaded;
+        private double _currentSpeed;
 
         public static DownloadManagerService Instance => _instance ??= new DownloadManagerService();
 
@@ -77,6 +78,7 @@ namespace ReduxInstaller.Services
 
                 _lastSpeedUpdate = DateTime.Now;
                 _lastBytesDownloaded = 0;
+                _currentSpeed = 0;
 
                 LoggingService.Instance.Info($"Starting download from: {SanitizeUrl(task.Url)}");
 
@@ -117,7 +119,7 @@ namespace ReduxInstaller.Services
                     totalBytesRead += bytesRead;
 
                     var now = DateTime.Now;
-                    if ((now - lastUiUpdate).TotalMilliseconds >= 120)
+                    if ((now - lastUiUpdate).TotalMilliseconds >= 250)
                     {
                         lastUiUpdate = now;
                         var currentTotal = totalBytesRead;
@@ -127,10 +129,7 @@ namespace ReduxInstaller.Services
 
                         RunOnUIThread(() =>
                         {
-                            task.BytesDownloaded = currentTotal;
-                            task.ProgressPercentage = currentProgress;
-                            task.DownloadSpeed = currentSpeed;
-                            task.TimeRemaining = currentTimeRemaining;
+                            task.UpdateProgress(currentTotal, currentProgress, currentSpeed, currentTimeRemaining);
                             DownloadTaskUpdated?.Invoke(this, task);
                         });
                     }
@@ -140,8 +139,7 @@ namespace ReduxInstaller.Services
 
                 RunOnUIThread(() =>
                 {
-                    task.BytesDownloaded = totalBytesRead;
-                    task.ProgressPercentage = 100;
+                    task.UpdateProgress(totalBytesRead, 100, 0, null);
                     task.Status = ActiveDownloadStatus.Completed;
                     task.EndTime = DateTime.Now;
                     DownloadTaskCompleted?.Invoke(this, task);
@@ -286,30 +284,44 @@ namespace ReduxInstaller.Services
             if (timeElapsed >= 0.5)
             {
                 var bytesSinceLastUpdate = totalBytesRead - _lastBytesDownloaded;
-                var speed = bytesSinceLastUpdate / timeElapsed;
+                var speed = timeElapsed > 0 ? bytesSinceLastUpdate / timeElapsed : 0;
 
                 _lastBytesDownloaded = totalBytesRead;
                 _lastSpeedUpdate = now;
+                _currentSpeed = speed >= 0 ? speed : _currentSpeed;
 
-                return speed;
+                return _currentSpeed;
             }
 
-            return 0;
+            return _currentSpeed;
         }
 
         private TimeSpan? CalculateTimeRemaining(long totalBytesRead, long? totalBytes, double currentSpeed)
         {
-            if (!totalBytes.HasValue || totalBytes.Value == 0 || currentSpeed == 0)
+            try
+            {
+                if (!totalBytes.HasValue || totalBytes.Value <= 0 || currentSpeed <= 0)
+                    return null;
+
+                var bytesRemaining = totalBytes.Value - totalBytesRead;
+                if (bytesRemaining <= 0)
+                    return TimeSpan.Zero;
+
+                var secondsRemaining = bytesRemaining / currentSpeed;
+                if (double.IsNaN(secondsRemaining) || double.IsInfinity(secondsRemaining) || secondsRemaining <= 0 || secondsRemaining > 86400 * 30)
+                    return null;
+
+                return TimeSpan.FromSeconds(secondsRemaining);
+            }
+            catch
+            {
                 return null;
-
-            var bytesRemaining = totalBytes.Value - totalBytesRead;
-            var secondsRemaining = bytesRemaining / currentSpeed;
-
-            return TimeSpan.FromSeconds(secondsRemaining);
+            }
         }
 
         private string FormatBytes(long bytes)
         {
+            if (bytes <= 0) return "0 B";
             string[] sizes = { "B", "KB", "MB", "GB", "TB" };
             int order = 0;
             double size = bytes;

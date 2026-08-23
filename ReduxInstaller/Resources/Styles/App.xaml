@@ -336,8 +336,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ProgressBar">
-                    <Grid>
-                        <Border x:Name="Track"
+                    <Grid x:Name="Root">
+                        <Border x:Name="PART_Track"
                                 Background="{TemplateBinding Background}"
                                 CornerRadius="4"/>
                         <Border x:Name="PART_Indicator"

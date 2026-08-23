@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using System.Windows;
 using ReduxInstaller.Services;
 using ReduxInstaller.Views;
@@ -12,6 +14,25 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+
+        // Global unhandled exception handlers to prevent crashes and log all errors
+        AppDomain.CurrentDomain.UnhandledException += (s, args) =>
+        {
+            var ex = args.ExceptionObject as Exception;
+            LoggingService.Instance.Error("Unhandled AppDomain Exception", ex);
+        };
+
+        DispatcherUnhandledException += (s, args) =>
+        {
+            LoggingService.Instance.Error("Unhandled Dispatcher Exception", args.Exception);
+            args.Handled = true; // Prevents crash
+        };
+
+        TaskScheduler.UnobservedTaskException += (s, args) =>
+        {
+            LoggingService.Instance.Error("Unobserved Task Exception", args.Exception);
+            args.SetObserved();
+        };
 
         // Initialize services
         LoggingService.Instance.Info("Application starting");
@@ -64,4 +85,3 @@ public partial class App : Application
         base.OnExit(e);
     }
 }
-

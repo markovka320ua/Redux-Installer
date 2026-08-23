@@ -44,19 +44,35 @@ namespace ReduxInstaller.Models
         public ActiveDownloadStatus Status
         {
             get => _status;
-            set { _status = value; OnPropertyChanged(); OnPropertyChanged(nameof(StatusIcon)); OnPropertyChanged(nameof(StatusText)); }
+            set 
+            { 
+                _status = value; 
+                OnPropertyChanged(); 
+                OnPropertyChanged(nameof(StatusIcon)); 
+                OnPropertyChanged(nameof(StatusText)); 
+            }
         }
         
         public long BytesDownloaded
         {
             get => _bytesDownloaded;
-            set { _bytesDownloaded = value; OnPropertyChanged(); OnPropertyChanged(nameof(DownloadedSize)); }
+            set 
+            { 
+                _bytesDownloaded = value; 
+                OnPropertyChanged(); 
+                OnPropertyChanged(nameof(DownloadedSize)); 
+            }
         }
         
         public long TotalBytes
         {
             get => _totalBytes;
-            set { _totalBytes = value; OnPropertyChanged(); OnPropertyChanged(nameof(TotalSize)); }
+            set 
+            { 
+                _totalBytes = value; 
+                OnPropertyChanged(); 
+                OnPropertyChanged(nameof(TotalSize)); 
+            }
         }
         
         public double ProgressPercentage
@@ -68,13 +84,23 @@ namespace ReduxInstaller.Models
         public double DownloadSpeed
         {
             get => _downloadSpeed;
-            set { _downloadSpeed = value; OnPropertyChanged(); OnPropertyChanged(nameof(SpeedText)); }
+            set 
+            { 
+                _downloadSpeed = value; 
+                OnPropertyChanged(); 
+                OnPropertyChanged(nameof(SpeedText)); 
+            }
         }
         
         public TimeSpan? TimeRemaining
         {
             get => _timeRemaining;
-            set { _timeRemaining = value; OnPropertyChanged(); OnPropertyChanged(nameof(TimeRemainingText)); }
+            set 
+            { 
+                _timeRemaining = value; 
+                OnPropertyChanged(); 
+                OnPropertyChanged(nameof(TimeRemainingText)); 
+            }
         }
         
         public DateTime StartTime
@@ -99,6 +125,22 @@ namespace ReduxInstaller.Models
         {
             get => _cancellationTokenSource;
             set { _cancellationTokenSource = value; OnPropertyChanged(); }
+        }
+
+        public void UpdateProgress(long bytesDownloaded, double progressPercentage, double downloadSpeed, TimeSpan? timeRemaining)
+        {
+            _bytesDownloaded = bytesDownloaded;
+            _progressPercentage = progressPercentage;
+            _downloadSpeed = downloadSpeed;
+            _timeRemaining = timeRemaining;
+
+            OnPropertyChanged(nameof(BytesDownloaded));
+            OnPropertyChanged(nameof(DownloadedSize));
+            OnPropertyChanged(nameof(ProgressPercentage));
+            OnPropertyChanged(nameof(DownloadSpeed));
+            OnPropertyChanged(nameof(SpeedText));
+            OnPropertyChanged(nameof(TimeRemaining));
+            OnPropertyChanged(nameof(TimeRemainingText));
         }
 
         public string StatusIcon => Status switch
@@ -130,6 +172,7 @@ namespace ReduxInstaller.Models
 
         private string FormatBytes(long bytes)
         {
+            if (bytes <= 0) return "0 B";
             string[] sizes = { "B", "KB", "MB", "GB", "TB" };
             int order = 0;
             double size = bytes;
@@ -143,6 +186,7 @@ namespace ReduxInstaller.Models
 
         private string FormatTime(TimeSpan time)
         {
+            if (time.TotalSeconds <= 0) return "";
             if (time.TotalHours > 1)
                 return $"{(int)time.TotalHours}h {time.Minutes}m";
             if (time.TotalMinutes > 1)

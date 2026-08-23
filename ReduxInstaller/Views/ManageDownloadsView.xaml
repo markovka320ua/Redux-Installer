@@ -87,7 +87,9 @@
                         <ListBox x:Name="ActiveDownloadsListBox" 
                                  Background="Transparent"
                                  BorderThickness="0"
-                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                 VirtualizingStackPanel.IsVirtualizing="False">
                             <ListBox.ItemTemplate>
                                 <DataTemplate DataType="models:DownloadTask">
                                     <Border Background="{StaticResource CardSecondaryBrush}" 
