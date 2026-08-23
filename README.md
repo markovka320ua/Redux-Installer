@@ -1,89 +1,135 @@
 # Redux Installer
 
-Portable Windows installer for GTA V Redux mod.
+<div align="center">
 
-## Features
+![Redux Installer](https://img.shields.io/badge/Version-1.0.4-brightgreen)
+![Platform](https://img.shields.io/badge/Platform-Windows-blue)
+![License](https://img.shields.io/badge/License-MIT-orange)
 
-- ✅ Self-contained - no .NET Runtime installation required
-- ✅ Download and extract ZIP archives directly to GTA V folder
-- ✅ Progress tracking with download speed and ETA
-- ✅ Automatic GTA V detection
-- ✅ Nested folder support in ZIP extraction
-- ✅ Custom notification system
-- ✅ Modern dark UI design with rounded corners
-- ✅ Multi-language support (Ukrainian, English, Russian)
-- ✅ Default language: Russian
+**Простий та швидкий інсталятор мода Redux для GTA V**
 
-## Download
+[📥 Завантажити](https://github.com/markovka320ua/Redux-Installer/releases) | [📖 Інструкція](#як-користуватися) | [❓ FAQ](#faq)
 
-Latest version: [ReduxInstaller-Windows-x64-v1.0.2.zip](https://github.com/markovka320ua/Redux-Installer/releases)
+</div>
 
-## Usage
+---
 
-1. Download the ZIP file
-2. Extract to any folder
-3. Run `ReduxInstaller.exe`
-4. Configure GTA V path in Settings
-5. Enter mod URL and click Install
+## ✨ Особливості
 
-## Requirements
+- 🚀 **Швидке встановлення** - завантаження та встановлення в кілька кліків
+- 🎯 **Автоматичне виявлення** - автоматично знаходить папку з GTA V
+- 📦 **Безпечне встановлення** - захист від Zip Slip та перевірка файлів
+- 🌍 **Багатомовність** - українська, англійська, російська
+- 🎨 **Сучасний дизайн** - темна тема з закругленими кутами
+- 📥 **Менеджер завантажень** - історія завантажень з можливістю повтору
+- ⚡ **Portable** - не потребує встановлення .NET Runtime
+- 🔒 **Безпека** - перевірка доступу та місця на диску
 
+---
+
+## 📸 Скріншоти
+
+<div align="center">
+  <img src="https://via.placeholder.com/800x500/1C1C1C/E91E63?text=Redux+Installer+Screenshot" alt="Redux Installer Interface"/>
+</div>
+
+---
+
+## 📥 Завантаження
+
+### Вимоги
 - Windows 10/11 x64
-- ~70 MB free disk space
+- ~70 MB вільного місця на диску
+- Встановлена гра GTA V
 
-## Build
+### Встановлення
+1. Завантажте останню версію з [Releases](https://github.com/markovka320ua/Redux-Installer/releases)
+2. Розпакуйте ZIP-архів у будь-яку папку
+3. Запустіть `ReduxInstaller.exe`
+4. Насолоджуйтесь простим встановленням!
 
-```bash
-dotnet clean -c Release
-dotnet publish -c Release -r win-x64 --self-contained -p:PublishSingleFile=false
-```
+---
 
-## GitHub Release Setup
+## 🎮 Як користуватися
 
-To create a GitHub Release with the portable build:
+### Крок 1: Налаштування шляху до GTA V
+1. Натисніть кнопку **"Налаштування"** у лівому меню
+2. Натисніть **"Змінити"** біля поля "Шлях до GTA V"
+3. Виберіть папку, де знаходиться `GTA5.exe`
+4. Або натисніть **"Знайти автоматично"**
 
-1. Go to [Releases page](https://github.com/markovka320ua/Redux-Installer/releases)
-2. Click "Create a new release"
-3. Select tag `v1.0.2`
-4. Title: `Version 1.0.2 - UI improvements and multi-language support`
-5. Description:
-```
-## What's New
+### Крок 2: Встановлення Redux
+1. Перейдіть на сторінку **"Встановлення Redux"**
+2. Вставте пряме посилання на ZIP-архів з модом Redux
+3. Натисніть кнопку **"Встановити"**
+4. Чекайте завершення завантаження та встановлення
+5. Готово! Мод встановлено!
 
-### UI Improvements
-- Fixed window control buttons (32x32px, rounded corners, proper hover states)
-- Increased button width for better text fit
-- Added Change Location button that navigates to Settings
-- Moved Settings to bottom of sidebar with separator
-- Reduced sidebar font size for Install Redux button
-- Reduced URL input field height
-- Changed Install button text to shorter version
-- Added icons to Open Logs and Clean Temp buttons
-- Removed Technologies and Platform sections from About page
-- Changed window border-radius to 12px
+---
 
-### Multi-language Support
-- Added English (en-US) localization
-- Added Russian (ru-RU) localization
-- Set Russian as default language
-- Added restart dialog when changing language
+## 🌍 Мови
 
-### Color Updates
-- Cards: #1C1C1C
-- Borders: #2A2A2A
-- Accent: #E91E63
+Redux Installer підтримує три мови:
+- 🇺🇦 **Українська** (за замовчуванням)
+- 🇬🇧 **English**
+- 🇷🇺 **Русский**
 
-### Bug Fixes
-- Fixed NotificationService with error handling
-- Improved resource loading for different build scenarios
-```
-6. Attach `ReduxInstaller-Windows-x64-v1.0.2.zip` from the project root
-7. Click "Publish release"
+Щоб змінити мову:
+1. Перейдіть в **"Налаштування"**
+2. Виберіть потрібну мову зі списку
+3. Перезапустіть програму
 
-## Developer
+---
 
-- [markovka320](https://t.me/markovka320)
+## ❓ FAQ
 
-## License
+**Q: Чому програма не знаходить GTA V?**  
+A: Переконайтеся, що папка містить файл `GTA5.exe`. Якщо гра встановлена через Steam, папка зазвичай знаходиться в `SteamLibrary\steamapps\common\Grand Theft Auto V`.
 
-MIT
+**Q: Чи безпечно ця програма?**  
+A: Так! Redux Installer є портативною програмою, яка не потребує встановлення додаткових компонентів. Весь код відкритий і доступний на GitHub.
+
+**Q: Чи працює це з версією Epic Games?**  
+A: Так, Redux Installer працює з будь-якою версією GTA V (Steam, Epic Games, Rockstar Launcher), якщо ви правильно виберете папку з грою.
+
+**Q: Що робити, якщо встановлення не вдалося?**  
+A: Перевірте:
+- Правильність посилання на ZIP-архів
+- Наявність вільного місця на диску (потрібно ~4 GB)
+- Доступ до папки з GTA V
+- Підключення до інтернету
+
+**Q: Чи можна скасувати встановлення?**  
+A: Так, натисніть кнопку "Скасувати" під час завантаження або встановлення.
+
+---
+
+## 🔧 Технічна інформація
+
+- **Версія:** 1.0.4
+- **Фреймворк:** .NET 8
+- **Тип:** Portable (self-contained)
+- **Розмір:** ~67 MB
+- **Розробник:** [markovka320](https://t.me/markovka320)
+
+---
+
+## 📄 Ліцензія
+
+Проект ліцензовано під [MIT License](LICENSE).
+
+---
+
+## 🤝 Підтримка
+
+Якщо у вас є питання або пропозиції:
+- Створіть [Issue](https://github.com/markovka320ua/Redux-Installer/issues) на GitHub
+- Напишіть розробнику: [Telegram](https://t.me/markovka320)
+
+---
+
+<div align="center">
+
+**Зроблено з ❤️ для GTA V спільноти**
+
+</div>
