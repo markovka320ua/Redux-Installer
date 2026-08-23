@@ -28,13 +28,9 @@
             BorderBrush="{StaticResource BorderBrush}" 
             BorderThickness="1"
             Background="Transparent">
-        <Grid>
-            <Grid.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                    <GradientStop Color="#121212" Offset="0"/>
-                    <GradientStop Color="#151515" Offset="1"/>
-                </LinearGradientBrush>
-            </Grid.Background>
+        <Border Background="{StaticResource BackgroundBrush}"
+                CornerRadius="12">
+            <Grid>
             <!-- Custom Title Bar -->
             <Grid Height="32" 
                   VerticalAlignment="Top" 
@@ -254,11 +250,12 @@
 
                 <!-- Content Area -->
                 <Border Grid.Column="1" 
-                        Background="{StaticResource BackgroundBrush}"
+                        Background="Transparent"
                         Padding="32">
                     <ContentControl x:Name="ContentArea"/>
                 </Border>
             </Grid>
-        </Grid>
+            </Grid>
+        </Border>
     </Border>
 </Window>
