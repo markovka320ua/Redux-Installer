@@ -52,6 +52,7 @@
   "ErrorFilesExistDescription": "Некоторые файлы уже существуют в целевой папке. Они будут перезаписаны.",
   "ErrorDiskSpace": "Недостаточно места на диске",
   "GtaVSelectionTitle": "Выбрать папку GTA V",
+  "InstallUrlPlaceholder": "Введите ссылку для загрузки...",
   "settings_language": "Язык интерфейса",
   "settings_language_uk": "Українська",
   "settings_language_en": "English",

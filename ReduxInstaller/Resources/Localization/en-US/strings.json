@@ -52,6 +52,7 @@
   "ErrorFilesExistDescription": "Some files already exist in the target directory. They will be overwritten.",
   "ErrorDiskSpace": "Not enough disk space",
   "GtaVSelectionTitle": "Select GTA V Folder",
+  "InstallUrlPlaceholder": "Enter download link...",
   "settings_language": "Interface Language",
   "settings_language_uk": "Ukrainian",
   "settings_language_en": "English",
