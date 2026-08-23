@@ -159,14 +159,14 @@
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Button Style="{StaticResource PrimaryButton}" 
                                 Content="{utilities:Loc InstallDoneButton}"
-                                Width="120"
+                                Width="140"
                                 Height="40"
                                 Margin="0,0,8,0"
                                 Click="DoneButton_Click"/>
 
                         <Button Style="{StaticResource SecondaryButton}" 
                                 Content="{utilities:Loc InstallOpenFolder}"
-                                Width="140"
+                                Width="160"
                                 Height="40"
                                 Click="OpenFolderButton_Click"/>
                     </StackPanel>

@@ -93,7 +93,7 @@
 
                     <ComboBox x:Name="LanguageComboBox" 
                               Width="220" 
-                              Height="40"
+                              Height="48"
                               HorizontalAlignment="Left"
                               Style="{StaticResource CustomComboBox}"
                               ItemContainerStyle="{StaticResource CustomComboBoxItem}"

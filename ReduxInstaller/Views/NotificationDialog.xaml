@@ -29,9 +29,6 @@
     </Window.Resources>
 
     <Grid>
-        <!-- Semi-transparent overlay -->
-        <Grid Background="#80000000"/>
-        
         <!-- Notification Card -->
         <Border Background="#1C1C1C" 
                 CornerRadius="16" 

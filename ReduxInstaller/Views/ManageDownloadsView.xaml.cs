@@ -18,20 +18,36 @@ namespace ReduxInstaller.Views
 
         private void LoadHistory()
         {
-            var historyService = DownloadHistoryService.Instance;
-            HistoryListBox.ItemsSource = historyService.History;
-
-            if (historyService.History.Count == 0)
+            try
             {
-                var emptyText = new TextBlock
+                var historyService = DownloadHistoryService.Instance;
+                HistoryListBox.ItemsSource = historyService.History;
+
+                if (historyService.History.Count == 0)
                 {
-                    Text = LocalizationService.Instance.GetString("download_empty"),
+                    var emptyText = new TextBlock
+                    {
+                        Text = LocalizationService.Instance.GetString("download_empty"),
+                        FontSize = 14,
+                        Foreground = System.Windows.Media.Brushes.Gray,
+                        HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
+                        Margin = new System.Windows.Thickness(0, 40, 0, 0)
+                    };
+                    HistoryListBox.Items.Add(emptyText);
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggingService.Instance.Error("Failed to load download history", ex);
+                var errorText = new TextBlock
+                {
+                    Text = "Не вдалося завантажити історію",
                     FontSize = 14,
-                    Foreground = System.Windows.Media.Brushes.Gray,
+                    Foreground = System.Windows.Media.Brushes.Red,
                     HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
                     Margin = new System.Windows.Thickness(0, 40, 0, 0)
                 };
-                HistoryListBox.Items.Add(emptyText);
+                HistoryListBox.Items.Add(errorText);
             }
         }
 

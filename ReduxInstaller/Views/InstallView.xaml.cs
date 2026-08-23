@@ -36,7 +36,8 @@ namespace ReduxInstaller.Views
             UrlInputCard.Visibility = Visibility.Visible;
             ProgressCard.Visibility = Visibility.Collapsed;
             SuccessCard.Visibility = Visibility.Collapsed;
-            UrlTextBox.Text = "";
+            UrlTextBox.Text = LocalizationService.Instance.GetString("InstallUrlPlaceholder");
+            UrlTextBox.Foreground = (System.Windows.Media.Brush)Resources["MutedTextBrush"];
             _isInstalling = false;
 
             // Hide download manager button when installation is complete
