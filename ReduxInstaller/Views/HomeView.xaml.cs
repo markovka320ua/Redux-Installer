@@ -51,5 +51,15 @@ namespace ReduxInstaller.Views
                 mainWindow.NavigateToInstall();
             }
         }
+
+        private void ChangeLocation_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            // Navigate to Settings view
+            var mainWindow = System.Windows.Application.Current.MainWindow as MainWindow;
+            if (mainWindow != null)
+            {
+                mainWindow.NavigateToSettings();
+            }
+        }
     }
 }

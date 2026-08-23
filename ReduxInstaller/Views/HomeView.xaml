@@ -72,7 +72,7 @@
 
                     <Button Style="{StaticResource PrimaryButton}" 
                             HorizontalAlignment="Left"
-                            Width="200"
+                            Width="280"
                             Height="48"
                             FontSize="16"
                             Click="InstallButton_Click">
@@ -119,10 +119,12 @@
                         </StackPanel>
                     </Border>
 
-                    <TextBlock Text="ℹ️ Натисніть кнопку, щоб налаштувати шлях до GTA V в налаштуваннях" 
-                               FontSize="12" 
-                               Foreground="{StaticResource MutedTextBrush}"
-                               TextWrapping="Wrap"/>
+                    <Button Style="{StaticResource SecondaryButton}" 
+                            Content="Змінити розташування"
+                            Width="160"
+                            Height="36"
+                            HorizontalAlignment="Left"
+                            Click="ChangeLocation_Click"/>
                 </StackPanel>
             </Border>
         </Grid>

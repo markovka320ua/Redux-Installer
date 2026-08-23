@@ -56,7 +56,9 @@
                              GotFocus="UrlTextBox_GotFocus"
                              LostFocus="UrlTextBox_LostFocus"
                              Margin="0,0,0,24"
-                             FontSize="15"/>
+                             FontSize="15"
+                             Padding="18,10"
+                             Height="40"/>
 
                     <Button x:Name="InstallButton" 
                             Style="{StaticResource PrimaryButton}" 
@@ -67,7 +69,7 @@
                             Click="InstallButton_Click">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="⬇️" FontSize="18" Margin="0,0,12,0"/>
-                            <TextBlock Text="{utilities:Loc InstallButton}" FontWeight="SemiBold"/>
+                            <TextBlock Text="Встановити" FontWeight="SemiBold"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>

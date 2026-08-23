@@ -24,13 +24,13 @@
         </ResourceDictionary>
     </Window.Resources>
 
-    <Border CornerRadius="8"
+    <Border CornerRadius="12"
             BorderBrush="{StaticResource BorderBrush}" 
             BorderThickness="1">
         <Border.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                <GradientStop Color="#151515" Offset="0"/>
-                <GradientStop Color="#1a1a1a" Offset="1"/>
+                <GradientStop Color="#121212" Offset="0"/>
+                <GradientStop Color="#151515" Offset="1"/>
             </LinearGradientBrush>
         </Border.Background>
         <Grid>
@@ -57,12 +57,13 @@
                 <!-- Window Controls -->
                 <StackPanel Grid.Column="2" 
                             Orientation="Horizontal" 
-                            HorizontalAlignment="Right">
-                    <Button Width="46" 
+                            HorizontalAlignment="Right"
+                            Margin="0,0,12,0">
+                    <Button Width="32" 
                             Height="32" 
                             Background="Transparent" 
                             BorderThickness="0"
-                            Foreground="{StaticResource SecondaryTextBrush}"
+                            Foreground="#8C8C8C"
                             Content="—"
                             FontSize="16"
                             Cursor="Hand"
@@ -75,7 +76,8 @@
                                         <ControlTemplate TargetType="Button">
                                             <Border Background="{TemplateBinding Background}" 
                                                     Width="{TemplateBinding Width}" 
-                                                    Height="{TemplateBinding Height}">
+                                                    Height="{TemplateBinding Height}"
+                                                    CornerRadius="8">
                                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                         </ControlTemplate>
@@ -84,21 +86,23 @@
                                 <Style.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
                                         <Setter Property="Background" Value="#2A2A2A"/>
+                                        <Setter Property="Foreground" Value="#F2F2F2"/>
                                     </Trigger>
                                 </Style.Triggers>
                             </Style>
                         </Button.Style>
                     </Button>
-                    <Button Width="46" 
+                    <Button Width="32" 
                             Height="32" 
                             Background="Transparent" 
                             BorderThickness="0"
-                            Foreground="{StaticResource SecondaryTextBrush}"
+                            Foreground="#8C8C8C"
                             Content="□"
                             FontSize="12"
                             Cursor="Hand"
                             Click="MaximizeButton_Click"
-                            WindowChrome.IsHitTestVisibleInChrome="True">
+                            WindowChrome.IsHitTestVisibleInChrome="True"
+                            Margin="4,0,0,0">
                         <Button.Style>
                             <Style TargetType="Button">
                                 <Setter Property="Template">
@@ -106,7 +110,8 @@
                                         <ControlTemplate TargetType="Button">
                                             <Border Background="{TemplateBinding Background}" 
                                                     Width="{TemplateBinding Width}" 
-                                                    Height="{TemplateBinding Height}">
+                                                    Height="{TemplateBinding Height}"
+                                                    CornerRadius="8">
                                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                         </ControlTemplate>
@@ -115,21 +120,23 @@
                                 <Style.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
                                         <Setter Property="Background" Value="#2A2A2A"/>
+                                        <Setter Property="Foreground" Value="#F2F2F2"/>
                                     </Trigger>
                                 </Style.Triggers>
                             </Style>
                         </Button.Style>
                     </Button>
-                    <Button Width="46" 
+                    <Button Width="32" 
                             Height="32" 
                             Background="Transparent" 
                             BorderThickness="0"
-                            Foreground="{StaticResource SecondaryTextBrush}"
+                            Foreground="#8C8C8C"
                             Content="✕"
-                            FontSize="14"
+                            FontSize="12"
                             Cursor="Hand"
                             Click="CloseButton_Click"
-                            WindowChrome.IsHitTestVisibleInChrome="True">
+                            WindowChrome.IsHitTestVisibleInChrome="True"
+                            Margin="4,0,0,0">
                         <Button.Style>
                             <Style TargetType="Button">
                                 <Setter Property="Template">
@@ -137,7 +144,8 @@
                                         <ControlTemplate TargetType="Button">
                                             <Border Background="{TemplateBinding Background}" 
                                                     Width="{TemplateBinding Width}" 
-                                                    Height="{TemplateBinding Height}">
+                                                    Height="{TemplateBinding Height}"
+                                                    CornerRadius="8">
                                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                         </ControlTemplate>
@@ -191,7 +199,7 @@
                                 Click="HomeNavButton_Click"
                                 Margin="0,4,0,4">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="🏠" FontSize="20" Margin="0,0,12,0"/>
+                                <TextBlock Text="🏠" FontSize="18" Margin="0,0,12,0"/>
                                 <TextBlock Text="{utilities:Loc NavHome}" FontSize="14"/>
                             </StackPanel>
                         </Button>
@@ -201,18 +209,8 @@
                                 Click="InstallNavButton_Click"
                                 Margin="0,4,0,4">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="⬇️" FontSize="20" Margin="0,0,12,0"/>
-                                <TextBlock Text="{utilities:Loc NavInstall}" FontSize="14"/>
-                            </StackPanel>
-                        </Button>
-
-                        <Button x:Name="SettingsNavButton" 
-                                Style="{StaticResource NavButton}"
-                                Click="SettingsNavButton_Click"
-                                Margin="0,4,0,4">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="⚙️" FontSize="20" Margin="0,0,12,0"/>
-                                <TextBlock Text="{utilities:Loc NavSettings}" FontSize="14"/>
+                                <TextBlock Text="⬇️" FontSize="18" Margin="0,0,12,0"/>
+                                <TextBlock Text="{utilities:Loc NavInstall}" FontSize="13"/>
                             </StackPanel>
                         </Button>
 
@@ -221,8 +219,22 @@
                                 Click="AboutNavButton_Click"
                                 Margin="0,4,0,4">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="ℹ️" FontSize="20" Margin="0,0,12,0"/>
+                                <TextBlock Text="ℹ️" FontSize="18" Margin="0,0,12,0"/>
                                 <TextBlock Text="{utilities:Loc NavAbout}" FontSize="14"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Border Height="1" 
+                                Background="#252525" 
+                                Margin="16,16,16,16"/>
+
+                        <Button x:Name="SettingsNavButton" 
+                                Style="{StaticResource NavButton}"
+                                Click="SettingsNavButton_Click"
+                                Margin="0,4,0,4">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="⚙️" FontSize="18" Margin="0,0,12,0"/>
+                                <TextBlock Text="{utilities:Loc NavSettings}" FontSize="14"/>
                             </StackPanel>
                         </Button>
                     </StackPanel>

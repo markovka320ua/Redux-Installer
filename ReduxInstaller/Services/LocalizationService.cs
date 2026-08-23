@@ -20,7 +20,7 @@ namespace ReduxInstaller.Services
 
         private LocalizationService()
         {
-            _currentCulture = CultureInfo.GetCultureInfo("uk-UA");
+            _currentCulture = CultureInfo.GetCultureInfo("ru-RU");
             LoadResources();
         }
 
@@ -28,7 +28,18 @@ namespace ReduxInstaller.Services
         {
             try
             {
+                // Try to load from publish directory first, then from base directory
                 var resourceFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Localization", _currentCulture.Name, "strings.json");
+                
+                if (!File.Exists(resourceFile))
+                {
+                    // Try alternative path for development/publish scenarios
+                    var altPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "Resources", "Localization", _currentCulture.Name, "strings.json");
+                    if (File.Exists(altPath))
+                    {
+                        resourceFile = Path.GetFullPath(altPath);
+                    }
+                }
                 
                 if (File.Exists(resourceFile))
                 {
@@ -84,8 +95,9 @@ namespace ReduxInstaller.Services
         {
             var languages = new List<CultureInfo>
             {
-                CultureInfo.GetCultureInfo("uk-UA")
-                // Add more languages here in the future
+                CultureInfo.GetCultureInfo("uk-UA"),
+                CultureInfo.GetCultureInfo("en-US"),
+                CultureInfo.GetCultureInfo("ru-RU")
             };
             return languages;
         }

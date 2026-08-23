@@ -100,7 +100,9 @@
                               Foreground="{StaticResource PrimaryTextBrush}"
                               Padding="18,14"
                               SelectionChanged="LanguageComboBox_SelectionChanged">
-                        <ComboBoxItem Content="Українська" Tag="uk-UA" IsSelected="True"/>
+                        <ComboBoxItem Content="Українська" Tag="uk-UA"/>
+                        <ComboBoxItem Content="English" Tag="en-US"/>
+                        <ComboBoxItem Content="Русский" Tag="ru-RU" IsSelected="True"/>
                     </ComboBox>
                 </StackPanel>
             </Border>
@@ -118,17 +120,17 @@
                     </StackPanel>
 
                     <Button Style="{StaticResource SecondaryButton}" 
-                            Content="{utilities:Loc SettingsOpenLogs}"
+                            Content="📁 Відкрити папку"
                             HorizontalAlignment="Left"
-                            Width="140"
+                            Width="160"
                             Height="40"
                             Margin="0,0,0,12"
                             Click="OpenLogs_Click"/>
 
                     <Button Style="{StaticResource SecondaryButton}" 
-                            Content="{utilities:Loc SettingsCleanTemp}"
+                            Content="🗑 Очистити тимчасові"
                             HorizontalAlignment="Left"
-                            Width="140"
+                            Width="160"
                             Height="40"
                             Click="CleanTemp_Click"/>
                 </StackPanel>

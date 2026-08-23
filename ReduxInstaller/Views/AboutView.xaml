@@ -48,7 +48,7 @@
                                        FontWeight="Bold" 
                                        Foreground="{StaticResource PrimaryTextBrush}"
                                        Margin="0,0,0,8"/>
-                            <TextBlock Text="v1.0.1" 
+                            <TextBlock Text="v1.0.2" 
                                        FontSize="14" 
                                        Foreground="{StaticResource AccentBrush}"
                                        FontWeight="SemiBold"/>
@@ -75,53 +75,20 @@
                                    Foreground="{StaticResource PrimaryTextBrush}"
                                    Margin="0,0,0,16"/>
 
+                        <TextBlock Text="markovka320" 
+                                   FontSize="15" 
+                                   Foreground="{StaticResource SecondaryTextBrush}"
+                                   Margin="0,0,0,8"/>
+
                         <Button Style="{StaticResource SecondaryButton}" 
                                 HorizontalAlignment="Left"
                                 Padding="20,12"
                                 Click="DeveloperButton_Click">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="✈️" FontSize="18" Margin="0,0,12,0"/>
-                                <TextBlock Text="markovka320" FontWeight="SemiBold" FontSize="15"/>
+                                <TextBlock Text="Telegram" FontSize="15" FontWeight="SemiBold"/>
                             </StackPanel>
                         </Button>
                     </StackPanel>
-
-                    <!-- Divider -->
-                    <Border Height="1" 
-                            Background="{StaticResource BorderBrush}" 
-                            Margin="0,0,0,32"/>
-
-                    <!-- Tech Info -->
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel Grid.Column="0">
-                            <TextBlock Text="Технології:" 
-                                       FontSize="13" 
-                                       FontWeight="SemiBold" 
-                                       Foreground="{StaticResource PrimaryTextBrush}"
-                                       Margin="0,0,0,8"/>
-
-                            <TextBlock Text=".NET 8, WPF, C#" 
-                                       FontSize="14" 
-                                       Foreground="{StaticResource SecondaryTextBrush}"/>
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="1">
-                            <TextBlock Text="Платформа:" 
-                                       FontSize="13" 
-                                       FontWeight="SemiBold" 
-                                       Foreground="{StaticResource PrimaryTextBrush}"
-                                       Margin="0,0,0,8"/>
-
-                            <TextBlock Text="Windows Desktop" 
-                                       FontSize="14" 
-                                       Foreground="{StaticResource SecondaryTextBrush}"/>
-                        </StackPanel>
-                    </Grid>
                 </StackPanel>
             </Border>
         </StackPanel>

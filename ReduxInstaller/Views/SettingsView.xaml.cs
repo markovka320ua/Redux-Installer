@@ -96,8 +96,22 @@ namespace ReduxInstaller.Views
                     settingsService.SetLanguage(languageCode);
                     LoggingService.Instance.Info($"Language changed to: {languageCode}");
                     
-                    // Don't show notification immediately - just log it
-                    // Language change will be applied on next restart
+                    // Show restart dialog
+                    NotificationService.Instance.ShowConfirm(
+                        LocalizationService.Instance.GetString("settings_restart_required"),
+                        "",
+                        onConfirm: () =>
+                        {
+                            // Restart application
+                            System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
+                            Application.Current.Shutdown();
+                        },
+                        onCancel: () =>
+                        {
+                            // Revert language selection if cancelled
+                            LoadSettings();
+                        }
+                    );
                 }
             }
         }

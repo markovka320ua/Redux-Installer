@@ -7,7 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <AssemblyName>ReduxInstaller</AssemblyName>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <StartupObject>ReduxInstaller.App</StartupObject>
   </PropertyGroup>
 
@@ -20,6 +20,12 @@
 
   <ItemGroup>
     <None Update="Resources\Localization\uk-UA\strings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Localization\en-US\strings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Localization\ru-RU\strings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Styles\App.xaml">
