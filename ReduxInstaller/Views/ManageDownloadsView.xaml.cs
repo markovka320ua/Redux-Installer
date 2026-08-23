@@ -54,9 +54,13 @@ namespace ReduxInstaller.Views
         private void RetryButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             // TODO: Implement retry functionality
-            NotificationService.Instance.ShowInfo(
-                LocalizationService.Instance.GetString("download_retry"),
-                "Повтор завантаження ще не реалізовано");
+            var button = sender as Button;
+            if (button?.DataContext is Models.DownloadHistoryItem item)
+            {
+                NotificationService.Instance.ShowInfo(
+                    LocalizationService.Instance.GetString("download_retry"),
+                    $"Повтор завантаження {item.FileName} ще не реалізовано");
+            }
         }
 
         private void ClearHistory_Click(object sender, System.Windows.RoutedEventArgs e)

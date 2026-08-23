@@ -114,7 +114,8 @@
                              Background="Transparent"
                              BorderThickness="0"
                              Height="300"
-                             Margin="0,0,0,16">
+                             Margin="0,0,0,16"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Border Background="#1A1A1A" 
@@ -160,7 +161,6 @@
                                                     Width="80"
                                                     Height="32"
                                                     FontSize="12"
-                                                    Visibility="{Binding RetryVisible}"
                                                     Click="RetryButton_Click"/>
                                         </StackPanel>
                                     </Grid>

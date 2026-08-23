@@ -95,10 +95,8 @@
                               Width="200" 
                               Height="40"
                               HorizontalAlignment="Left"
-                              Background="#1A1A1A"
-                              BorderBrush="#2A2A2A"
-                              Foreground="{StaticResource PrimaryTextBrush}"
-                              Padding="18,14"
+                              Style="{StaticResource CustomComboBox}"
+                              ItemContainerStyle="{StaticResource CustomComboBoxItem}"
                               SelectionChanged="LanguageComboBox_SelectionChanged">
                         <ComboBoxItem Content="Українська" Tag="uk-UA"/>
                         <ComboBoxItem Content="English" Tag="en-US"/>

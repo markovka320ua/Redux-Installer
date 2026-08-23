@@ -38,6 +38,10 @@ namespace ReduxInstaller.Views
             SuccessCard.Visibility = Visibility.Collapsed;
             UrlTextBox.Text = "";
             _isInstalling = false;
+
+            // Hide download manager button when installation is complete
+            var mainWindow = Application.Current.MainWindow as MainWindow;
+            mainWindow?.HideDownloadManagerButton();
         }
 
         private void UrlTextBox_GotFocus(object sender, RoutedEventArgs e)
@@ -96,6 +100,10 @@ namespace ReduxInstaller.Views
             UrlInputCard.Visibility = Visibility.Collapsed;
             ProgressCard.Visibility = Visibility.Visible;
             InstallButton.IsEnabled = false;
+
+            // Show download manager button
+            var mainWindow = Application.Current.MainWindow as MainWindow;
+            mainWindow?.ShowDownloadManagerButton();
 
             try
             {
