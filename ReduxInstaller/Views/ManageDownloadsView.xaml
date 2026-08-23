@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ReduxInstaller.Views"
              xmlns:utilities="clr-namespace:ReduxInstaller.Utilities"
+             xmlns:models="clr-namespace:ReduxInstaller.Models"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1200">
     
@@ -30,153 +31,143 @@
                        Foreground="{StaticResource PrimaryTextBrush}"
                        Margin="0,0,0,12"/>
             
-            <TextBlock Text="Переглядайте та керуйте історією завантажень" 
+            <TextBlock Text="Керуйте вашими завантаженнями" 
                        FontSize="16" 
                        Foreground="{StaticResource SecondaryTextBrush}"/>
         </StackPanel>
 
         <!-- Content -->
-        <StackPanel Grid.Row="1" MaxWidth="700">
-            <!-- Active Download Section -->
-            <Border Style="{StaticResource Card}" Margin="0,0,0,32" x:Name="ActiveDownloadCard" Visibility="Collapsed">
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
-                        <TextBlock Text="📥" FontSize="32" Margin="0,0,16,0"/>
-                        <TextBlock Text="{utilities:Loc download_active}" 
-                                   FontSize="20" 
-                                   FontWeight="SemiBold" 
-                                   Foreground="{StaticResource PrimaryTextBrush}"
-                                   VerticalAlignment="Center"/>
-                    </StackPanel>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!-- Active Downloads -->
+                <Border Style="{StaticResource Card}" Margin="0,0,0,32">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
+                            <TextBlock Text="⬇️" FontSize="32" Margin="0,0,16,0"/>
+                            <TextBlock Text="Активні завантаження" 
+                                       FontSize="20" 
+                                       FontWeight="SemiBold" 
+                                       Foreground="{StaticResource PrimaryTextBrush}"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
 
-                    <TextBlock x:Name="ActiveFileName" 
-                               Text="Redux.zip" 
-                               FontSize="16" 
-                               FontWeight="SemiBold"
-                               Foreground="{StaticResource PrimaryTextBrush}"
-                               Margin="0,0,0,16"/>
-
-                    <ProgressBar x:Name="ActiveProgressBar" 
-                                 Style="{StaticResource ModernProgressBar}"
+                        <ListBox x:Name="ActiveDownloadsListBox" 
+                                 Background="Transparent"
+                                 BorderThickness="0"
                                  Margin="0,0,0,16"
-                                 Height="8"/>
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate DataType="models:DownloadTask">
+                                    <Border Background="#1A1A1A" 
+                                            BorderBrush="#2A2A2A" 
+                                            BorderThickness="1" 
+                                            CornerRadius="12" 
+                                            Padding="24"
+                                            Margin="0,0,0,16">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
-                        <TextBlock x:Name="ActiveProgressText" 
-                                   Text="0 / 0" 
-                                   FontSize="15" 
-                                   FontWeight="SemiBold"
-                                   Foreground="{StaticResource PrimaryTextBrush}"
-                                   Margin="0,0,24,0"/>
+                                            <!-- Header -->
+                                            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,16">
+                                                <TextBlock Text="{Binding StatusIcon}" FontSize="24" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                                                <StackPanel VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding FileName}" 
+                                                               FontSize="16" 
+                                                               FontWeight="SemiBold" 
+                                                               Foreground="{StaticResource PrimaryTextBrush}"/>
+                                                    <TextBlock Text="{Binding StatusText}" 
+                                                               FontSize="12" 
+                                                               Foreground="{StaticResource SecondaryTextBrush}"/>
+                                                </StackPanel>
+                                            </StackPanel>
 
-                        <TextBlock x:Name="ActiveSpeedText" 
-                                   Text="" 
-                                   FontSize="13" 
-                                   Foreground="{StaticResource SecondaryTextBrush}"
-                                   Margin="0,0,16,0"/>
+                                            <!-- Progress -->
+                                            <StackPanel Grid.Row="1" Margin="0,0,0,16">
+                                                <Grid Margin="0,0,0,8">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Grid.Column="0" 
+                                                               Text="{Binding DownloadedSize}" 
+                                                               FontSize="14" 
+                                                               Foreground="{StaticResource SecondaryTextBrush}"/>
+                                                    <TextBlock Grid.Column="1" 
+                                                               Text="/" 
+                                                               FontSize="14" 
+                                                               Foreground="{StaticResource SecondaryTextBrush}"
+                                                               Margin="4,0,4,0"/>
+                                                    <TextBlock Grid.Column="2" 
+                                                               Text="{Binding TotalSize}" 
+                                                               FontSize="14" 
+                                                               Foreground="{StaticResource SecondaryTextBrush}"/>
+                                                    <TextBlock Grid.Column="4" 
+                                                               Text="{Binding ProgressPercentage, StringFormat={}{0:F0}%}" 
+                                                               FontSize="14" 
+                                                               FontWeight="SemiBold"
+                                                               Foreground="{StaticResource AccentBrush}"/>
+                                                </Grid>
+                                                <ProgressBar Value="{Binding ProgressPercentage}" 
+                                                           Maximum="100" 
+                                                           Height="6" 
+                                                           Style="{StaticResource ModernProgressBar}"/>
+                                            </StackPanel>
 
-                        <TextBlock x:Name="ActiveTimeText" 
-                                   Text="" 
-                                   FontSize="13" 
-                                   Foreground="{StaticResource SecondaryTextBrush}"/>
+                                            <!-- Speed and Time -->
+                                            <Grid Grid.Row="2" Margin="0,0,0,16">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" 
+                                                           Text="{Binding SpeedText}" 
+                                                           FontSize="13" 
+                                                           Foreground="{StaticResource SecondaryTextBrush}"/>
+                                                <TextBlock Grid.Column="1" 
+                                                           Text="{Binding TimeRemainingText}" 
+                                                           FontSize="13" 
+                                                           Foreground="{StaticResource SecondaryTextBrush}"/>
+                                            </Grid>
+
+                                            <!-- Actions -->
+                                            <StackPanel Grid.Row="3" Orientation="Horizontal">
+                                                <Button x:Name="CancelButton"
+                                                        Style="{StaticResource SecondaryButton}"
+                                                        Content="Скасувати"
+                                                        Height="36"
+                                                        Click="CancelButton_Click"/>
+                                                
+                                                <Button x:Name="RetryButton"
+                                                        Style="{StaticResource PrimaryButton}"
+                                                        Content="Повторити"
+                                                        Height="36"
+                                                        Margin="8,0,0,0"
+                                                        Click="RetryButton_Click"
+                                                        Visibility="Collapsed"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
                     </StackPanel>
+                </Border>
 
-                    <StackPanel Orientation="Horizontal">
-                        <Button Style="{StaticResource SecondaryButton}" 
-                                Content="{utilities:Loc download_pause}"
-                                Width="120"
-                                Height="40"
-                                Margin="0,0,12,0"
-                                Click="PauseButton_Click"/>
-
-                        <Button Style="{StaticResource SecondaryButton}" 
-                                Content="{utilities:Loc download_cancel}"
-                                Width="120"
-                                Height="40"
-                                Click="CancelButton_Click"/>
-                    </StackPanel>
-                </StackPanel>
-            </Border>
-
-            <!-- History Section -->
-            <Border Style="{StaticResource Card}">
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
-                        <TextBlock Text="📜" FontSize="32" Margin="0,0,16,0"/>
-                        <TextBlock Text="{utilities:Loc download_history}" 
-                                   FontSize="20" 
-                                   FontWeight="SemiBold" 
-                                   Foreground="{StaticResource PrimaryTextBrush}"
-                                   VerticalAlignment="Center"/>
-                    </StackPanel>
-
-                    <ListBox x:Name="HistoryListBox" 
-                             Background="Transparent"
-                             BorderThickness="0"
-                             Height="300"
-                             Margin="0,0,0,16"
-                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Border Background="#1A1A1A" 
-                                        BorderBrush="#2A2A2A" 
-                                        BorderThickness="1" 
-                                        CornerRadius="8" 
-                                        Padding="16,12"
-                                        Margin="0,0,0,8">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock Grid.Column="0" 
-                                                   Text="{Binding StatusIcon}" 
-                                                   FontSize="20" 
-                                                   Margin="0,0,16,0"
-                                                   VerticalAlignment="Center"/>
-
-                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding FileName}" 
-                                                       FontSize="14" 
-                                                       FontWeight="SemiBold"
-                                                       Foreground="{StaticResource PrimaryTextBrush}"/>
-                                            <TextBlock Text="{Binding DateTimeString}" 
-                                                       FontSize="12" 
-                                                       Foreground="{StaticResource SecondaryTextBrush}"/>
-                                        </StackPanel>
-
-                                        <StackPanel Grid.Column="2" 
-                                                    Orientation="Horizontal" 
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding FileSizeString}" 
-                                                       FontSize="12" 
-                                                       Foreground="{StaticResource SecondaryTextBrush}"
-                                                       Margin="0,0,12,0"/>
-                                            
-                                            <Button Style="{StaticResource SecondaryButton}" 
-                                                    Content="{utilities:Loc download_retry}"
-                                                    Width="80"
-                                                    Height="32"
-                                                    FontSize="12"
-                                                    Click="RetryButton_Click"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-
-                    <Button Style="{StaticResource SecondaryButton}" 
-                            Content="{utilities:Loc download_clear_history}"
-                            HorizontalAlignment="Left"
-                            Width="160"
-                            Height="40"
-                            Click="ClearHistory_Click"/>
-                </StackPanel>
-            </Border>
-        </StackPanel>
+                <!-- Clear History Button -->
+                <Button Style="{StaticResource SecondaryButton}" 
+                        Content="🗑 Очистити історію"
+                        Height="40"
+                        HorizontalAlignment="Left"
+                        Click="ClearHistory_Click"/>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </UserControl>

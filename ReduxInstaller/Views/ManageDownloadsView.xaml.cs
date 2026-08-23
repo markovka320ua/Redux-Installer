@@ -1,5 +1,6 @@
 using System.Windows.Controls;
 using ReduxInstaller.Services;
+using ReduxInstaller.Models;
 
 namespace ReduxInstaller.Views
 {
@@ -9,23 +10,39 @@ namespace ReduxInstaller.Views
         {
             InitializeComponent();
             Loaded += ManageDownloadsView_Loaded;
+            Unloaded += ManageDownloadsView_Unloaded;
         }
 
         private void ManageDownloadsView_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
-            LoadHistory();
+            var downloadManager = DownloadManagerService.Instance;
+            downloadManager.DownloadTaskAdded += DownloadManager_DownloadTaskAdded;
+            downloadManager.DownloadTaskUpdated += DownloadManager_DownloadTaskUpdated;
+            downloadManager.DownloadTaskCompleted += DownloadManager_DownloadTaskCompleted;
+            downloadManager.DownloadTaskFailed += DownloadManager_DownloadTaskFailed;
+
+            LoadActiveDownloads();
         }
 
-        private void LoadHistory()
+        private void ManageDownloadsView_Unloaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            var downloadManager = DownloadManagerService.Instance;
+            downloadManager.DownloadTaskAdded -= DownloadManager_DownloadTaskAdded;
+            downloadManager.DownloadTaskUpdated -= DownloadManager_DownloadTaskUpdated;
+            downloadManager.DownloadTaskCompleted -= DownloadManager_DownloadTaskCompleted;
+            downloadManager.DownloadTaskFailed -= DownloadManager_DownloadTaskFailed;
+        }
+
+        private void LoadActiveDownloads()
         {
             try
             {
-                var historyService = DownloadHistoryService.Instance;
-                HistoryListBox.ItemsSource = historyService.History;
+                var downloadManager = DownloadManagerService.Instance;
+                ActiveDownloadsListBox.ItemsSource = downloadManager.ActiveDownloads;
 
-                if (historyService.History.Count == 0)
+                if (downloadManager.ActiveDownloads.Count == 0)
                 {
-                    HistoryListBox.ItemsSource = null;
+                    ActiveDownloadsListBox.ItemsSource = null;
                     var emptyText = new TextBlock
                     {
                         Text = LocalizationService.Instance.GetString("download_empty"),
@@ -34,23 +51,43 @@ namespace ReduxInstaller.Views
                         HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
                         Margin = new System.Windows.Thickness(0, 40, 0, 0)
                     };
-                    HistoryListBox.Items.Add(emptyText);
+                    ActiveDownloadsListBox.Items.Add(emptyText);
                 }
             }
             catch (Exception ex)
             {
-                LoggingService.Instance.Error("Failed to load download history", ex);
-                HistoryListBox.ItemsSource = null;
+                LoggingService.Instance.Error("Failed to load active downloads", ex);
+                ActiveDownloadsListBox.ItemsSource = null;
                 var errorText = new TextBlock
                 {
-                    Text = "Не вдалося завантажити історію",
+                    Text = "Не вдалося завантажити активні завантаження",
                     FontSize = 14,
                     Foreground = System.Windows.Media.Brushes.Red,
                     HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
                     Margin = new System.Windows.Thickness(0, 40, 0, 0)
                 };
-                HistoryListBox.Items.Add(errorText);
+                ActiveDownloadsListBox.Items.Add(errorText);
             }
+        }
+
+        private void DownloadManager_DownloadTaskAdded(object? sender, DownloadTask task)
+        {
+            LoadActiveDownloads();
+        }
+
+        private void DownloadManager_DownloadTaskUpdated(object? sender, DownloadTask task)
+        {
+            // ListBox will auto-update due to ObservableCollection
+        }
+
+        private void DownloadManager_DownloadTaskCompleted(object? sender, DownloadTask task)
+        {
+            LoadActiveDownloads();
+        }
+
+        private void DownloadManager_DownloadTaskFailed(object? sender, DownloadTask task)
+        {
+            LoadActiveDownloads();
         }
 
         private void PauseButton_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -63,21 +100,21 @@ namespace ReduxInstaller.Views
 
         private void CancelButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            // TODO: Implement cancel functionality
-            NotificationService.Instance.ShowInfo(
-                LocalizationService.Instance.GetString("download_cancel"),
-                "Скасування завантаження ще не реалізовано");
+            var button = sender as Button;
+            if (button?.DataContext is DownloadTask task)
+            {
+                DownloadManagerService.Instance.CancelDownload(task);
+            }
         }
 
         private void RetryButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            // TODO: Implement retry functionality
             var button = sender as Button;
-            if (button?.DataContext is Models.DownloadHistoryItem item)
+            if (button?.DataContext is DownloadTask task)
             {
                 NotificationService.Instance.ShowInfo(
                     LocalizationService.Instance.GetString("download_retry"),
-                    $"Повтор завантаження {item.FileName} ще не реалізовано");
+                    $"Повтор завантаження {task.FileName} ще не реалізовано");
             }
         }
 
@@ -85,14 +122,21 @@ namespace ReduxInstaller.Views
         {
             NotificationService.Instance.ShowConfirm(
                 LocalizationService.Instance.GetString("download_clear_history"),
-                "Ви впевнені, що хочете очистити всю історію завантажень?",
+                "Ви впевнені, що хочете очистити всі активні завантаження?",
                 onConfirm: () =>
                 {
-                    DownloadHistoryService.Instance.ClearHistory();
-                    LoadHistory();
+                    var downloadManager = DownloadManagerService.Instance;
+                    foreach (var task in downloadManager.ActiveDownloads.ToList())
+                    {
+                        if (task.Status == ActiveDownloadStatus.Completed || task.Status == ActiveDownloadStatus.Failed || task.Status == ActiveDownloadStatus.Cancelled)
+                        {
+                            downloadManager.RemoveDownload(task);
+                        }
+                    }
+                    LoadActiveDownloads();
                     NotificationService.Instance.ShowSuccess(
                         LocalizationService.Instance.GetString("download_clear_history"),
-                        "Історія успішно очищена");
+                        "Активні завантаження успішно очищені");
                 }
             );
         }

@@ -5,12 +5,14 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using ReduxInstaller.Services;
+using ReduxInstaller.Models;
 
 namespace ReduxInstaller.Views
 {
     public partial class InstallView : UserControl
     {
         private readonly DispatcherTimer _speedUpdateTimer;
+        private DownloadTask? _currentDownloadTask;
         private string? _downloadedFilePath;
         private bool _isInstalling;
 
@@ -22,13 +24,56 @@ namespace ReduxInstaller.Views
             _speedUpdateTimer = new DispatcherTimer();
             _speedUpdateTimer.Interval = TimeSpan.FromSeconds(1);
             _speedUpdateTimer.Tick += SpeedUpdateTimer_Tick;
-            
+
             Loaded += InstallView_Loaded;
+            Unloaded += InstallView_Unloaded;
         }
 
         private void InstallView_Loaded(object sender, RoutedEventArgs e)
         {
-            ResetUI();
+            // Subscribe to download manager events
+            var downloadManager = DownloadManagerService.Instance;
+            downloadManager.DownloadTaskUpdated += DownloadManager_DownloadTaskUpdated;
+            downloadManager.DownloadTaskCompleted += DownloadManager_DownloadTaskCompleted;
+            downloadManager.DownloadTaskFailed += DownloadManager_DownloadTaskFailed;
+
+            // Check if there's an active download
+            if (downloadManager.ActiveDownloads.Count > 0)
+            {
+                var activeTask = downloadManager.ActiveDownloads[0];
+                if (activeTask.Status == ActiveDownloadStatus.Downloading || activeTask.Status == ActiveDownloadStatus.Extracting)
+                {
+                    _currentDownloadTask = activeTask;
+                    _isInstalling = true;
+                    _downloadedFilePath = activeTask.DestinationPath;
+                    UrlInputCard.Visibility = Visibility.Collapsed;
+                    ProgressCard.Visibility = Visibility.Visible;
+                    InstallButton.IsEnabled = false;
+
+                    // Show download manager button
+                    var mainWindow = Application.Current.MainWindow as MainWindow;
+                    mainWindow?.ShowDownloadManagerButton();
+
+                    UpdateProgressUI(activeTask);
+                }
+                else
+                {
+                    ResetUI();
+                }
+            }
+            else
+            {
+                ResetUI();
+            }
+        }
+
+        private void InstallView_Unloaded(object sender, RoutedEventArgs e)
+        {
+            // Unsubscribe from events when navigating away
+            var downloadManager = DownloadManagerService.Instance;
+            downloadManager.DownloadTaskUpdated -= DownloadManager_DownloadTaskUpdated;
+            downloadManager.DownloadTaskCompleted -= DownloadManager_DownloadTaskCompleted;
+            downloadManager.DownloadTaskFailed -= DownloadManager_DownloadTaskFailed;
         }
 
         private void ResetUI()
@@ -39,6 +84,8 @@ namespace ReduxInstaller.Views
             UrlTextBox.Text = LocalizationService.Instance.GetString("InstallUrlPlaceholder");
             UrlTextBox.Foreground = (System.Windows.Media.Brush)Resources["MutedTextBrush"];
             _isInstalling = false;
+            _currentDownloadTask = null;
+            _downloadedFilePath = null;
 
             // Hide download manager button when installation is complete
             var mainWindow = Application.Current.MainWindow as MainWindow;
@@ -66,7 +113,7 @@ namespace ReduxInstaller.Views
         private async void InstallButton_Click(object sender, RoutedEventArgs e)
         {
             var url = UrlTextBox.Text;
-            
+
             // Validate URL
             if (string.IsNullOrWhiteSpace(url) || url == LocalizationService.Instance.GetString("InstallUrlPlaceholder"))
             {
@@ -108,13 +155,15 @@ namespace ReduxInstaller.Views
 
             try
             {
-                var downloadService = DownloadService.Instance;
-                downloadService.ProgressChanged += DownloadService_ProgressChanged;
-                downloadService.DownloadCompleted += DownloadService_DownloadCompleted;
-                downloadService.DownloadFailed += DownloadService_DownloadFailed;
+                var downloadManager = DownloadManagerService.Instance;
+                var tempFilePath = downloadManager.GetTempFilePath();
+                _downloadedFilePath = tempFilePath;
 
-                var tempFilePath = downloadService.GetTempFilePath();
-                _downloadedFilePath = await downloadService.DownloadFileAsync(url, tempFilePath);
+                // Create download task
+                _currentDownloadTask = downloadManager.CreateDownloadTask(url, tempFilePath);
+
+                // Start download
+                await downloadManager.StartDownloadAsync(_currentDownloadTask);
 
                 // Download completed, start extraction
                 await StartExtraction(_downloadedFilePath, gtaVPath);
@@ -135,48 +184,55 @@ namespace ReduxInstaller.Views
 
         private bool IsValidUrl(string url)
         {
-            return Uri.TryCreate(url, UriKind.Absolute, out var uriResult) 
+            return Uri.TryCreate(url, UriKind.Absolute, out var uriResult)
                    && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
         }
 
-        private void DownloadService_ProgressChanged(object? sender, DownloadProgressEventArgs e)
+        private void DownloadManager_DownloadTaskUpdated(object? sender, DownloadTask task)
         {
-            Dispatcher.Invoke(() =>
+            if (_currentDownloadTask != null && task.Id == _currentDownloadTask.Id)
             {
-                var progress = e.ProgressPercentage;
-                ProgressBar.Value = progress;
-                
-                var downloaded = FormatBytes(e.BytesDownloaded);
-                var total = FormatBytes(e.TotalBytes);
-                ProgressText.Text = $"{downloaded} / {total}";
-                
-                if (e.DownloadSpeed > 0)
-                {
-                    SpeedText.Text = $"{LocalizationService.Instance.GetString("DownloadSpeed")}: {FormatBytes((long)e.DownloadSpeed)}/s";
-                }
-                
-                if (e.TimeRemaining.HasValue)
-                {
-                    TimeText.Text = $"{LocalizationService.Instance.GetString("DownloadTimeRemaining")}: {FormatTime(e.TimeRemaining.Value)}";
-                }
-            });
+                Dispatcher.Invoke(() => UpdateProgressUI(task));
+            }
         }
 
-        private void DownloadService_DownloadCompleted(object? sender, EventArgs e)
+        private void DownloadManager_DownloadTaskCompleted(object? sender, DownloadTask task)
         {
-            Dispatcher.Invoke(() =>
+            if (_currentDownloadTask != null && task.Id == _currentDownloadTask.Id)
             {
-                ProgressTitle.Text = LocalizationService.Instance.GetString("DownloadComplete");
-            });
+                Dispatcher.Invoke(() =>
+                {
+                    ProgressTitle.Text = LocalizationService.Instance.GetString("DownloadComplete");
+                });
+            }
         }
 
-        private void DownloadService_DownloadFailed(object? sender, Exception e)
+        private void DownloadManager_DownloadTaskFailed(object? sender, DownloadTask task)
         {
-            Dispatcher.Invoke(() =>
+            if (_currentDownloadTask != null && task.Id == _currentDownloadTask.Id)
             {
-                ResetUI();
-                ShowError(LocalizationService.Instance.GetString("ErrorDownloadFailed"));
-            });
+                Dispatcher.Invoke(() =>
+                {
+                    ResetUI();
+                    ShowError(LocalizationService.Instance.GetString("ErrorDownloadFailed"));
+                });
+            }
+        }
+
+        private void UpdateProgressUI(DownloadTask task)
+        {
+            ProgressBar.Value = task.ProgressPercentage;
+            ProgressText.Text = $"{task.DownloadedSize} / {task.TotalSize}";
+
+            if (task.DownloadSpeed > 0)
+            {
+                SpeedText.Text = $"{LocalizationService.Instance.GetString("DownloadSpeed")}: {task.SpeedText}";
+            }
+
+            if (task.TimeRemaining.HasValue)
+            {
+                TimeText.Text = $"{LocalizationService.Instance.GetString("DownloadTimeRemaining")}: {task.TimeRemainingText}";
+            }
         }
 
         private async System.Threading.Tasks.Task StartExtraction(string zipPath, string destinationPath)
@@ -184,9 +240,9 @@ namespace ReduxInstaller.Views
             try
             {
                 ProgressTitle.Text = LocalizationService.Instance.GetString("InstallPreparing");
-                
+
                 var zipService = ZipService.Instance;
-                
+
                 // Validate ZIP
                 if (!zipService.IsValidZipFile(zipPath))
                 {
@@ -197,7 +253,7 @@ namespace ReduxInstaller.Views
                 var zipSize = zipService.GetZipSize(zipPath);
                 var estimatedSize = zipService.GetEstimatedExtractedSize(zipPath);
                 var diskSpaceService = DiskSpaceService.Instance;
-                
+
                 if (!diskSpaceService.HasEnoughSpaceForDownloadAndExtraction(destinationPath, zipSize, estimatedSize))
                 {
                     throw new InvalidOperationException(LocalizationService.Instance.GetString("ErrorDiskSpace"));
@@ -258,6 +314,12 @@ namespace ReduxInstaller.Views
                     }
                 }
 
+                // Remove download task from active downloads
+                if (_currentDownloadTask != null)
+                {
+                    DownloadManagerService.Instance.RemoveDownload(_currentDownloadTask);
+                }
+
                 // Show success
                 ProgressCard.Visibility = Visibility.Collapsed;
                 SuccessCard.Visibility = Visibility.Visible;
@@ -276,9 +338,9 @@ namespace ReduxInstaller.Views
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            if (_isInstalling)
+            if (_isInstalling && _currentDownloadTask != null)
             {
-                DownloadService.Instance.CancelDownload();
+                DownloadManagerService.Instance.CancelDownload(_currentDownloadTask);
                 ZipService.Instance.CancelExtraction();
             }
         }
@@ -294,7 +356,7 @@ namespace ReduxInstaller.Views
         {
             var settingsService = SettingsService.Instance;
             var gtaVPath = settingsService.GetGtaVPath();
-            
+
             if (!string.IsNullOrEmpty(gtaVPath) && Directory.Exists(gtaVPath))
             {
                 try

@@ -284,7 +284,8 @@
                                AllowsTransparency="True"
                                Placement="Bottom"
                                IsOpen="{TemplateBinding IsDropDownOpen}"
-                               PopupAnimation="Slide">
+                               PopupAnimation="Slide"
+                               Panel.ZIndex="1000">
                             <Border Name="DropDownBorder"
                                     Background="#1A1A1A"
                                     BorderBrush="#2A2A2A"
