@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Redux Installer](https://img.shields.io/badge/Version-1.0.8-brightgreen)
+![Redux Installer](https://img.shields.io/badge/Version-1.0.11-brightgreen)
 ![Platform](https://img.shields.io/badge/Platform-Windows-blue)
 ![License](https://img.shields.io/badge/License-MIT-orange)
 
