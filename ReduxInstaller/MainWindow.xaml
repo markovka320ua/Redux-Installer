@@ -174,7 +174,7 @@
                                        FontSize="18" 
                                        FontWeight="Bold" 
                                        Foreground="{StaticResource PrimaryTextBrush}"/>
-                            <TextBlock Text="v1.0.11 Portable" 
+                            <TextBlock Text="v1.0.12 Portable" 
                                        FontSize="12" 
                                        Foreground="{StaticResource MutedTextBrush}"
                                        Margin="0,2,0,0"/>

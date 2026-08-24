@@ -74,11 +74,11 @@ namespace ReduxInstaller.Services
             try
             {
                 var version = Assembly.GetExecutingAssembly().GetName().Version;
-                return version != null ? $"{version.Major}.{version.Minor}.{version.Build}" : "1.0.11";
+                return version != null ? $"{version.Major}.{version.Minor}.{version.Build}" : "1.0.12";
             }
             catch
             {
-                return "1.0.11";
+                return "1.0.12";
             }
         }
 
