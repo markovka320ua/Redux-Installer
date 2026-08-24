@@ -82,8 +82,7 @@ namespace ReduxInstaller.Views
             UrlInputCard.Visibility = Visibility.Visible;
             ProgressCard.Visibility = Visibility.Collapsed;
             SuccessCard.Visibility = Visibility.Collapsed;
-            UrlTextBox.Text = LocalizationService.Instance.GetString("InstallUrlPlaceholder");
-            UrlTextBox.Foreground = (Brush)FindResource("MutedTextBrush");
+            UrlTextBox.Text = string.Empty;
             _isInstalling = false;
             _currentDownloadTask = null;
             _downloadedFilePath = null;
@@ -93,30 +92,12 @@ namespace ReduxInstaller.Views
             mainWindow?.HideDownloadManagerButton();
         }
 
-        private void UrlTextBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            if (UrlTextBox.Text == LocalizationService.Instance.GetString("InstallUrlPlaceholder"))
-            {
-                UrlTextBox.Text = "";
-                UrlTextBox.Foreground = (Brush)FindResource("PrimaryTextBrush");
-            }
-        }
-
-        private void UrlTextBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(UrlTextBox.Text))
-            {
-                UrlTextBox.Text = LocalizationService.Instance.GetString("InstallUrlPlaceholder");
-                UrlTextBox.Foreground = (Brush)FindResource("MutedTextBrush");
-            }
-        }
-
         private async void InstallButton_Click(object sender, RoutedEventArgs e)
         {
-            var url = UrlTextBox.Text;
+            var url = UrlTextBox.Text?.Trim() ?? string.Empty;
 
             // Validate URL
-            if (string.IsNullOrWhiteSpace(url) || url == LocalizationService.Instance.GetString("InstallUrlPlaceholder"))
+            if (string.IsNullOrWhiteSpace(url))
             {
                 ShowError(LocalizationService.Instance.GetString("ErrorUrlEmpty"));
                 return;

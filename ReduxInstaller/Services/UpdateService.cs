@@ -141,17 +141,26 @@ namespace ReduxInstaller.Services
             }
             catch (HttpRequestException ex)
             {
-                result.ErrorMessage = "Немає доступу до мережі або GitHub недоступний.";
-                LoggingService.Instance.Warning("Update check failed - network error", ex);
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    // 404 means no releases published yet on the repository
+                    result.HasUpdate = false;
+                    result.LatestVersion = result.CurrentVersion;
+                }
+                else
+                {
+                    result.ErrorMessage = LocalizationService.Instance.GetString("AboutUpdateError");
+                    LoggingService.Instance.Warning("Update check failed - network error", ex);
+                }
             }
             catch (TaskCanceledException)
             {
-                result.ErrorMessage = "Перевірка оновлень перевищила ліміт часу.";
+                result.ErrorMessage = LocalizationService.Instance.GetString("AboutUpdateError");
                 LoggingService.Instance.Warning("Update check timed out");
             }
             catch (Exception ex)
             {
-                result.ErrorMessage = "Помилка при перевірці оновлень.";
+                result.ErrorMessage = LocalizationService.Instance.GetString("AboutUpdateError");
                 LoggingService.Instance.Error("Update check failed", ex);
             }
 
