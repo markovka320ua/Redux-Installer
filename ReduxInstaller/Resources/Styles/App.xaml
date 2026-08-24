@@ -287,10 +287,12 @@
         <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
         <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="Padding" Value="16,10"/>
-        <Setter Property="FontSize" Value="14"/>
-        <Setter Property="MinHeight" Value="46"/>
+        <Setter Property="Padding" Value="16,0"/>
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="FontFamily" Value="Segoe UI, Segoe UI Variable, Arial, sans-serif"/>
+        <Setter Property="Height" Value="48"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
         <Setter Property="SelectionBrush" Value="{StaticResource AccentBrush}"/>
         <Setter Property="CaretBrush" Value="{StaticResource AccentBrush}"/>
         <Setter Property="Template">
@@ -309,13 +311,19 @@
                                        Text="{TemplateBinding Tag}"
                                        Foreground="{StaticResource MutedTextBrush}"
                                        FontSize="{TemplateBinding FontSize}"
+                                       FontFamily="{TemplateBinding FontFamily}"
                                        VerticalAlignment="Center"
+                                       HorizontalAlignment="Left"
                                        IsHitTestVisible="False"
+                                       Margin="2,0,0,0"
                                        Visibility="Collapsed"/>
                             
                             <ScrollViewer x:Name="PART_ContentHost" 
                                           Focusable="False"
                                           VerticalAlignment="Center"
+                                          HorizontalAlignment="Stretch"
+                                          Padding="0"
+                                          Margin="0"
                                           HorizontalScrollBarVisibility="Hidden"
                                           VerticalScrollBarVisibility="Hidden"/>
                         </Grid>
