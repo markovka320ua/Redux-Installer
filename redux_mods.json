@@ -1,17 +1,17 @@
 [
   {
-    "id": "redux-original",
-    "title": "GTA 5 Redux Original",
-    "version": "v1.16",
+    "id": "redux-markovka",
+    "title": "Redux Markovka320",
+    "version": "v1.0",
     "badge": "Популярне",
-    "date": "2024",
-    "author": "Josh Romito",
-    "size": "3.8 GB",
-    "image_url": "https://raw.githubusercontent.com/markovka320ua/Redux-Installer/main/Resources/Mods/redux_original.jpg",
-    "video_url": "https://www.youtube.com/watch?v=k10Et4VpHaU",
-    "download_url": "",
-    "short_description": "Повна переробка графіки, шейдерів, погоди, фізики та текстур 4K для GTA V.",
-    "full_description": "GTA 5 Redux — це масштабна модифікація для Grand Theft Auto V, яка включає:\n\n• Повністю перероблені погодні цикли та освітлення\n• 4K текстури доріг, рослинності, частинок пилу, диму та вибухів\n• Поліпшена фізика керування транспортом, падіння тіл та пошкоджень\n• Нова поведінка поліції та покращений AI пішоходів\n• Оптимізована продуктивність для плавної частоти кадрів."
+    "date": "2025",
+    "author": "markovka320",
+    "size": "1.95 GB",
+    "image_url": "https://i9.ytimg.com/vi/mEzT8gqwm8Q/mqdefault.jpg?v=6901542b&sqp=CNDUrtQG&rs=AOn4CLBsvLDRWRQpBuucs-8jaoyeH8mnSA",
+    "video_url": "https://www.youtube.com/watch?v=mEzT8gqwm8Q",
+    "download_url": "https://drive.usercontent.google.com/download?id=1LAhjjEBJBhizuq5GVeJusQfTyKOGCTib&export=download&authuser=0&confirm=t&uuid=61b7c5fc-d836-4bf1-ba59-44d443cc6775&at=AFYLz4Oin9hU2q_5jae9T3u1qWdM%3A1787489293026",
+    "short_description": "Redux для слабых/средних ПК. Ефекты поподания, TimeCycle, Custom прицел, оптимизация.",
+    "full_description": "Redux Markovka320:\n\n• Красивые TimeCycle\n• Качественые слегка розовые деревья\n• Оптимизация (Удаления дыма, мосора и т.д)\n• Custom прицел которые не пропадает 5 сек. после отпускания ПКМ\n• Подходит и для Crime и для Gos."
   },
   {
     "id": "redux-lite",
