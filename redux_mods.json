@@ -3,7 +3,7 @@
     "id": "redux-markovka",
     "title": "Redux Markovka320",
     "version": "v1.0",
-    "badge": "Популярне",
+    "badge": "New",
     "date": "2025",
     "author": "markovka320",
     "size": "1.95 GB",
@@ -12,19 +12,4 @@
     "download_url": "https://drive.usercontent.google.com/download?id=1LAhjjEBJBhizuq5GVeJusQfTyKOGCTib&export=download&authuser=0&confirm=t&uuid=61b7c5fc-d836-4bf1-ba59-44d443cc6775&at=AFYLz4Oin9hU2q_5jae9T3u1qWdM%3A1787489293026",
     "short_description": "Redux для слабых/средних ПК. Ефекты поподания, TimeCycle, Custom прицел, оптимизация.",
     "full_description": "Redux Markovka320:\n\n• Красивые TimeCycle\n• Качественые слегка розовые деревья\n• Оптимизация (Удаления дыма, мосора и т.д)\n• Custom прицел которые не пропадает 5 сек. после отпускания ПКМ\n• Подходит и для Crime и для Gos."
-  },
-  {
-    "id": "redux-lite",
-    "title": "GTA 5 Redux Lite Edition",
-    "version": "v1.5",
-    "badge": "Для слабких ПК",
-    "date": "2024",
-    "author": "Redux Team",
-    "size": "1.9 GB",
-    "image_url": "https://raw.githubusercontent.com/markovka320ua/Redux-Installer/main/Resources/Mods/redux_lite.jpg",
-    "video_url": "",
-    "download_url": "",
-    "short_description": "Полегшена версія Redux для максимальної продуктивності та стабільного FPS.",
-    "full_description": "Оптимізована версія моду Redux зі збереженням ключових графічних ефектів:\n\n• Оновлена колірна гама та контраст\n• Прибрані важкі текстури для максимальної продуктивності\n• Збережено покращену фізику та ефекти частинок\n• Ідеально підходить для ноутбуків та середніх ПК."
   }
-]
