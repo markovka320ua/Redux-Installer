@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ReduxInstaller.Views"
              xmlns:utilities="clr-namespace:ReduxInstaller.Utilities"
+             xmlns:models="clr-namespace:ReduxInstaller.Models"
              mc:Ignorable="d" 
              d:DesignHeight="700" d:DesignWidth="1000">
     
@@ -13,255 +14,775 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Resources/Styles/App.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <BooleanToVisibilityConverter x:Key="BoolToVis"/>
         </ResourceDictionary>
     </UserControl.Resources>
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+        <!-- Main Scrollable Content -->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <!-- Header -->
-        <StackPanel Grid.Row="0" Margin="0,0,0,32">
-            <TextBlock Text="{utilities:Loc InstallTitle}" 
-                       FontSize="34" 
-                       FontWeight="Bold" 
-                       Foreground="{StaticResource PrimaryTextBrush}"
-                       Margin="0,0,0,8"/>
-            
-            <TextBlock Text="{utilities:Loc InstallSubtitle}" 
-                       FontSize="15" 
-                       Foreground="{StaticResource SecondaryTextBrush}"/>
-        </StackPanel>
+            <!-- Header Section -->
+            <Grid Grid.Row="0" Margin="0,0,0,24">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-        <!-- Main Content (Centered & Responsive) -->
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-            <StackPanel MaxWidth="780" HorizontalAlignment="Left">
-                <!-- URL Input Card -->
-                <Border Style="{StaticResource CardHighlight}" 
-                        Margin="0,0,0,24" 
-                        x:Name="UrlInputCard">
-                    <StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
-                            <Border Background="{StaticResource AccentBadgeBg}"
-                                    CornerRadius="10"
-                                    Width="40" Height="40"
-                                    Margin="0,0,14,0">
-                                <Path Data="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"
-                                      Fill="{StaticResource AccentHoverBrush}"
-                                      Width="20" Height="20"
-                                      Stretch="Uniform"
-                                      HorizontalAlignment="Center"
-                                      VerticalAlignment="Center"/>
-                            </Border>
-                            <TextBlock Text="{utilities:Loc InstallUrlLabel}" 
-                                       FontSize="18" 
-                                       FontWeight="Bold" 
-                                       Foreground="{StaticResource PrimaryTextBrush}"
-                                       VerticalAlignment="Center"/>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="{utilities:Loc InstallTitle}" 
+                               FontSize="32" 
+                               FontWeight="Bold" 
+                               Foreground="{StaticResource PrimaryTextBrush}"
+                               Margin="0,0,0,6"/>
+                    
+                    <TextBlock Text="{utilities:Loc CatalogSubtitle}" 
+                               FontSize="14" 
+                               Foreground="{StaticResource SecondaryTextBrush}"/>
+                </StackPanel>
+
+                <!-- Search & Mode Selector Switcher -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- Search Box (visible only in catalog mode) -->
+                    <Border x:Name="SearchBoxBorder"
+                            Background="{StaticResource CardSecondaryBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="12,0"
+                            Height="38"
+                            Width="220"
+                            Margin="0,0,12,0">
+                        <Grid VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Path Grid.Column="0"
+                                  Data="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                                  Fill="{StaticResource SecondaryTextBrush}"
+                                  Width="14" Height="14"
+                                  Stretch="Uniform"
+                                  Margin="0,0,8,0"
+                                  VerticalAlignment="Center"/>
+                            <TextBox x:Name="SearchTextBox"
+                                     Grid.Column="1"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     Foreground="{StaticResource PrimaryTextBrush}"
+                                     FontSize="13"
+                                     VerticalContentAlignment="Center"
+                                     TextChanged="SearchTextBox_TextChanged"
+                                     CaretBrush="{StaticResource AccentBrush}"/>
+                            <!-- Search Placeholder -->
+                            <TextBlock Grid.Column="1"
+                                       Text="{utilities:Loc CatalogSearchPlaceholder}"
+                                       Foreground="{StaticResource MutedTextBrush}"
+                                       FontSize="13"
+                                       VerticalAlignment="Center"
+                                       IsHitTestVisible="False"
+                                       Visibility="{Binding Text.IsEmpty, ElementName=SearchTextBox, Converter={StaticResource BoolToVis}}"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Catalog Mode Button -->
+                    <Button x:Name="CatalogTabBtn"
+                            Style="{StaticResource ActiveTabPillButton}"
+                            Click="CatalogTabBtn_Click"
+                            Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Path Data="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"
+                                  Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  Width="13" Height="13"
+                                  Stretch="Uniform"
+                                  Margin="0,0,6,0"
+                                  VerticalAlignment="Center"/>
+                            <TextBlock Text="{utilities:Loc TabCatalog}" VerticalAlignment="Center"/>
                         </StackPanel>
-                        
-                        <TextBox x:Name="UrlTextBox" 
-                                 Style="{StaticResource ModernTextBox}"
-                                 Tag="{utilities:Loc InstallUrlPlaceholder}"
-                                 Margin="0,0,0,20"
-                                 FontSize="15"
-                                 Height="48"/>
+                    </Button>
 
-                        <Button x:Name="InstallButton" 
-                                Style="{StaticResource PrimaryButton}" 
-                                HorizontalAlignment="Left"
-                                Padding="28,12"
-                                Click="InstallButton_Click">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Path Data="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z" 
-                                      Fill="White"
-                                      Width="16" Height="16" 
-                                      Stretch="Uniform"
-                                      Margin="0,0,10,0"/>
-                                <TextBlock Text="{utilities:Loc InstallButton}" 
-                                           FontSize="14" 
-                                           FontWeight="SemiBold"
-                                           VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
-                    </StackPanel>
-                </Border>
-
-                <!-- Progress Card (Hidden by default) -->
-                <Border Style="{StaticResource Card}" 
-                        Margin="0,0,0,24" 
-                        x:Name="ProgressCard"
-                        Visibility="Collapsed">
-                    <StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
-                            <Border Background="{StaticResource AccentBadgeBg}"
-                                    CornerRadius="10"
-                                    Width="40" Height="40"
-                                    Margin="0,0,14,0">
-                                <Path Data="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z" 
-                                      Fill="{StaticResource AccentHoverBrush}"
-                                      Width="20" Height="20"
-                                      Stretch="Uniform"
-                                      HorizontalAlignment="Center"
-                                      VerticalAlignment="Center"/>
-                            </Border>
-                            <TextBlock x:Name="ProgressTitle" 
-                                       Text="{utilities:Loc DownloadProgress}" 
-                                       FontSize="18" 
-                                       FontWeight="Bold" 
-                                       Foreground="{StaticResource PrimaryTextBrush}"
-                                       VerticalAlignment="Center"/>
+                    <!-- Custom URL Mode Button -->
+                    <Button x:Name="CustomUrlTabBtn"
+                            Style="{StaticResource TabPillButton}"
+                            Click="CustomUrlTabBtn_Click">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Path Data="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"
+                                  Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  Width="13" Height="13"
+                                  Stretch="Uniform"
+                                  Margin="0,0,6,0"
+                                  VerticalAlignment="Center"/>
+                            <TextBlock Text="{utilities:Loc TabCustomUrl}" VerticalAlignment="Center"/>
                         </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
 
-                        <ProgressBar x:Name="ProgressBar" 
-                                     Style="{StaticResource ModernProgressBar}"
-                                     Margin="0,0,0,16"
-                                     Height="8"/>
+            <!-- Active Installation Progress Card (Appears on top when installing) -->
+            <Border Grid.Row="1"
+                    Style="{StaticResource CardHighlight}" 
+                    Margin="0,0,0,24" 
+                    x:Name="ProgressCard"
+                    Visibility="Collapsed">
+                <StackPanel>
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-                        <!-- Progress Meta Info Chips -->
-                        <WrapPanel Margin="0,0,0,24">
-                            <Border Background="#161620" CornerRadius="8" Padding="12,6" Margin="0,0,10,6">
-                                <TextBlock x:Name="ProgressText" 
-                                           Text="0 / 0" 
-                                           FontSize="13" 
-                                           FontWeight="SemiBold"
-                                           Foreground="{StaticResource PrimaryTextBrush}"/>
-                            </Border>
-
-                            <Border Background="#161620" CornerRadius="8" Padding="12,6" Margin="0,0,10,6">
-                                <StackPanel Orientation="Horizontal">
-                                    <Path Data="M20.38 8.57l-1.23 1.85a8 8 0 0 1-.22 7.58H5.07A8 8 0 0 1 15.58 6.85l1.85-1.23A10 10 0 0 0 3.35 19a2 2 0 0 0 1.72 1h13.85a2 2 0 0 0 1.74-1 10 10 0 0 0-.28-10.43zM10.59 15.41a2 2 0 0 0 2.83 0l5.66-8.49-8.49 5.66a2 2 0 0 0 0 2.83z"
-                                          Fill="{StaticResource SecondaryTextBrush}"
-                                          Width="12" Height="12"
-                                          Stretch="Uniform"
-                                          Margin="0,0,6,0"
-                                          VerticalAlignment="Center"/>
-                                    <TextBlock x:Name="SpeedText" 
-                                               Text="-- KB/s" 
-                                               FontSize="13" 
-                                               Foreground="{StaticResource SecondaryTextBrush}"/>
-                                </StackPanel>
-                            </Border>
-
-                            <Border Background="#161620" CornerRadius="8" Padding="12,6" Margin="0,0,0,6">
-                                <StackPanel Orientation="Horizontal">
-                                    <Path Data="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"
-                                          Fill="{StaticResource SecondaryTextBrush}"
-                                          Width="12" Height="12"
-                                          Stretch="Uniform"
-                                          Margin="0,0,6,0"
-                                          VerticalAlignment="Center"/>
-                                    <TextBlock x:Name="TimeText" 
-                                               Text="--:--" 
-                                               FontSize="13" 
-                                               Foreground="{StaticResource SecondaryTextBrush}"/>
-                                </StackPanel>
-                            </Border>
-                        </WrapPanel>
-
-                        <Button x:Name="CancelButton" 
-                                Style="{StaticResource DangerButton}" 
-                                HorizontalAlignment="Left"
-                                Click="CancelButton_Click">
-                            <StackPanel Orientation="Horizontal">
-                                <Path Data="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
-                                      Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                                      Width="12" Height="12"
-                                      Stretch="Uniform"
-                                      Margin="0,0,8,0"
-                                      VerticalAlignment="Center"/>
-                                <TextBlock Text="{utilities:Loc InstallCancelButton}" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
-                    </StackPanel>
-                </Border>
-
-                <!-- Success Card (Hidden by default) -->
-                <Border Style="{StaticResource Card}" 
-                        Margin="0,0,0,24" 
-                        x:Name="SuccessCard"
-                        Visibility="Collapsed">
-                    <StackPanel HorizontalAlignment="Center" Margin="16,8">
-                        <Border Background="#2010B981"
-                                CornerRadius="36"
-                                Width="72" Height="72"
-                                HorizontalAlignment="Center"
-                                Margin="0,0,0,16">
-                            <Path Data="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" 
-                                  Fill="{StaticResource SuccessBrush}"
-                                  Width="32" Height="32"
+                        <Border Grid.Column="0"
+                                Background="{StaticResource AccentBadgeBg}"
+                                CornerRadius="10"
+                                Width="42" Height="42"
+                                Margin="0,0,14,0">
+                            <Path Data="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z" 
+                                  Fill="{StaticResource AccentHoverBrush}"
+                                  Width="22" Height="22"
                                   Stretch="Uniform"
                                   HorizontalAlignment="Center"
                                   VerticalAlignment="Center"/>
                         </Border>
 
-                        <TextBlock Text="{utilities:Loc InstallComplete}" 
-                                   FontSize="22" 
-                                   FontWeight="Bold" 
-                                   Foreground="{StaticResource PrimaryTextBrush}"
-                                   Margin="0,0,0,8"
-                                   HorizontalAlignment="Center"/>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock x:Name="ProgressModName" 
+                                       Text="Redux Mod" 
+                                       FontSize="16" 
+                                       FontWeight="Bold" 
+                                       Foreground="{StaticResource PrimaryTextBrush}"/>
+                            <TextBlock x:Name="ProgressTitle" 
+                                       Text="{utilities:Loc DownloadProgress}" 
+                                       FontSize="13" 
+                                       Foreground="{StaticResource SecondaryTextBrush}"
+                                       Margin="0,2,0,0"/>
+                        </StackPanel>
 
-                        <TextBlock Text="{utilities:Loc InstallCompleteDescription}" 
-                                   FontSize="14" 
-                                   Foreground="{StaticResource SecondaryTextBrush}"
-                                   TextWrapping="Wrap"
-                                   TextAlignment="Center"
-                                   Margin="0,0,0,24"
-                                   HorizontalAlignment="Center"
-                                   MaxWidth="460"/>
+                        <Button Grid.Column="2"
+                                x:Name="CancelButton" 
+                                Style="{StaticResource DangerButton}" 
+                                VerticalAlignment="Center"
+                                Click="CancelButton_Click">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Path Data="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                                      Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                      Width="10" Height="10"
+                                      Stretch="Uniform"
+                                      Margin="0,0,6,0"
+                                      VerticalAlignment="Center"/>
+                                <TextBlock Text="{utilities:Loc InstallCancelButton}" FontSize="12" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
 
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                            <Button Style="{StaticResource PrimaryButton}" 
-                                    Content="{utilities:Loc InstallDoneButton}"
-                                    Padding="24,10"
-                                    Margin="0,0,12,0"
-                                    Click="DoneButton_Click"/>
+                    <ProgressBar x:Name="ProgressBar" 
+                                 Style="{StaticResource ModernProgressBar}"
+                                 Margin="0,0,0,12"
+                                 Height="8"/>
 
-                            <Button Style="{StaticResource SecondaryButton}" 
-                                    Padding="20,10"
-                                    Click="OpenFolderButton_Click">
-                                <StackPanel Orientation="Horizontal">
-                                    <Path Data="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"
-                                          Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                                          Width="14" Height="14"
+                    <!-- Progress Meta Info Chips -->
+                    <WrapPanel>
+                        <Border Background="#161620" CornerRadius="6" Padding="10,5" Margin="0,0,8,4">
+                            <TextBlock x:Name="ProgressText" 
+                                       Text="0 / 0" 
+                                       FontSize="12" 
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource PrimaryTextBrush}"/>
+                        </Border>
+
+                        <Border Background="#161620" CornerRadius="6" Padding="10,5" Margin="0,0,8,4">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock x:Name="SpeedText" 
+                                           Text="-- KB/s" 
+                                           FontSize="12" 
+                                           Foreground="{StaticResource SecondaryTextBrush}"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#161620" CornerRadius="6" Padding="10,5" Margin="0,0,0,4">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock x:Name="TimeText" 
+                                           Text="--:--" 
+                                           FontSize="12" 
+                                           Foreground="{StaticResource SecondaryTextBrush}"/>
+                            </StackPanel>
+                        </Border>
+                    </WrapPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Success Card -->
+            <Border Grid.Row="1"
+                    Style="{StaticResource Card}" 
+                    Margin="0,0,0,24" 
+                    x:Name="SuccessCard"
+                    Visibility="Collapsed">
+                <StackPanel HorizontalAlignment="Center" Margin="16,8">
+                    <Border Background="#2010B981"
+                            CornerRadius="36"
+                            Width="64" Height="64"
+                            HorizontalAlignment="Center"
+                            Margin="0,0,0,14">
+                        <Path Data="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" 
+                              Fill="{StaticResource SuccessBrush}"
+                              Width="28" Height="28"
+                              Stretch="Uniform"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"/>
+                    </Border>
+
+                    <TextBlock Text="{utilities:Loc InstallComplete}" 
+                               FontSize="20" 
+                               FontWeight="Bold" 
+                               Foreground="{StaticResource PrimaryTextBrush}"
+                               Margin="0,0,0,6"
+                               HorizontalAlignment="Center"/>
+
+                    <TextBlock Text="{utilities:Loc InstallCompleteDescription}" 
+                               FontSize="13" 
+                               Foreground="{StaticResource SecondaryTextBrush}"
+                               TextWrapping="Wrap"
+                               TextAlignment="Center"
+                               Margin="0,0,0,20"
+                               HorizontalAlignment="Center"
+                               MaxWidth="460"/>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Style="{StaticResource PrimaryButton}" 
+                                Content="{utilities:Loc InstallDoneButton}"
+                                Padding="22,9"
+                                Margin="0,0,10,0"
+                                Click="DoneButton_Click"/>
+
+                        <Button Style="{StaticResource SecondaryButton}" 
+                                Padding="18,9"
+                                Click="OpenFolderButton_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"
+                                      Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                      Width="13" Height="13"
+                                      Stretch="Uniform"
+                                      Margin="0,0,8,0"
+                                      VerticalAlignment="Center"/>
+                                <TextBlock Text="{utilities:Loc InstallOpenFolder}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Main Content Area: Tab 1 (Catalog) or Tab 2 (Custom URL) -->
+            <Grid Grid.Row="2">
+                <!-- VIEW 1: CATALOG OF MODS -->
+                <Grid x:Name="CatalogViewContainer">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Loading / Empty States -->
+                    <Border x:Name="CatalogLoadingBorder"
+                            Style="{StaticResource CardSubtle}"
+                            Padding="32"
+                            Margin="0,20,0,0"
+                            HorizontalAlignment="Center"
+                            Visibility="Collapsed">
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="{utilities:Loc CatalogLoading}"
+                                       FontSize="14"
+                                       Foreground="{StaticResource SecondaryTextBrush}"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Empty Search Result State -->
+                    <Border x:Name="CatalogEmptyBorder"
+                            Style="{StaticResource CardSubtle}"
+                            Padding="32"
+                            Margin="0,20,0,0"
+                            HorizontalAlignment="Center"
+                            Visibility="Collapsed">
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="{utilities:Loc CatalogEmptySearch}"
+                                       FontSize="14"
+                                       Foreground="{StaticResource MutedTextBrush}"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Catalog Items Grid -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <ItemsControl x:Name="ModsItemsControl">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="models:ReduxModItem">
+                                    <Border Width="240"
+                                            Height="290"
+                                            Margin="0,0,18,18"
+                                            Background="{StaticResource CardBrush}"
+                                            BorderBrush="{StaticResource BorderBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="12"
+                                            ClipToBounds="True"
+                                            Cursor="Hand"
+                                            MouseLeftButtonUp="ModCard_Click">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Effect">
+                                                    <Setter.Value>
+                                                        <DropShadowEffect Color="#000000" Opacity="0.3" BlurRadius="12" ShadowDepth="3"/>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+                                                        <Setter Property="Background" Value="{StaticResource CardHoverBrush}"/>
+                                                        <Setter Property="Effect">
+                                                            <Setter.Value>
+                                                                <DropShadowEffect Color="#E91E63" Opacity="0.35" BlurRadius="18" ShadowDepth="4"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="135"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+
+                                            <!-- Cover Image + Badge Overlay -->
+                                            <Grid Grid.Row="0">
+                                                <!-- Image Placeholder Background -->
+                                                <Border Background="#1A1824">
+                                                    <Path Data="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"
+                                                          Fill="#333344"
+                                                          Width="32" Height="32"
+                                                          Stretch="Uniform"
+                                                          HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center"/>
+                                                </Border>
+
+                                                <!-- Actual Image Loaded Async -->
+                                                <Image Source="{Binding ImageUrl}"
+                                                       Stretch="UniformToFill"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"/>
+
+                                                <!-- Gradient Darkening on Image Bottom -->
+                                                <Border>
+                                                    <Border.Background>
+                                                        <LinearGradientBrush StartPoint="0,0.4" EndPoint="0,1">
+                                                            <GradientStop Color="Transparent" Offset="0"/>
+                                                            <GradientStop Color="#CC16161E" Offset="1"/>
+                                                        </LinearGradientBrush>
+                                                    </Border.Background>
+                                                </Border>
+
+                                                <!-- Top Badges -->
+                                                <Grid Margin="10,10,10,0" VerticalAlignment="Top">
+                                                    <!-- Badge Tag (e.g., "Популярне", "Lite") -->
+                                                    <Border Background="{StaticResource AccentGradient}"
+                                                            CornerRadius="6"
+                                                            Padding="8,3"
+                                                            HorizontalAlignment="Left"
+                                                            Visibility="{Binding HasBadge, Converter={StaticResource BoolToVis}}">
+                                                        <TextBlock Text="{Binding Badge}"
+                                                                   FontSize="10"
+                                                                   FontWeight="Bold"
+                                                                   Foreground="White"/>
+                                                    </Border>
+
+                                                    <!-- Video Indicator Icon (if video exists) -->
+                                                    <Border Background="#99000000"
+                                                            CornerRadius="6"
+                                                            Padding="6,3"
+                                                            HorizontalAlignment="Right"
+                                                            Visibility="{Binding HasVideo, Converter={StaticResource BoolToVis}}">
+                                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <Path Data="M8 5v14l11-7z"
+                                                                  Fill="{StaticResource AccentHoverBrush}"
+                                                                  Width="8" Height="8"
+                                                                  Stretch="Uniform"
+                                                                  Margin="0,0,4,0"
+                                                                  VerticalAlignment="Center"/>
+                                                            <TextBlock Text="Відео"
+                                                                       FontSize="10"
+                                                                       FontWeight="SemiBold"
+                                                                       Foreground="White"/>
+                                                        </StackPanel>
+                                                    </Border>
+                                                </Grid>
+                                            </Grid>
+
+                                            <!-- Content Info -->
+                                            <Grid Grid.Row="1" Margin="14,10,14,14">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="*"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+
+                                                <!-- Title + Version -->
+                                                <StackPanel Grid.Row="0" Margin="0,0,0,4">
+                                                    <TextBlock Text="{Binding Title}"
+                                                               FontSize="14"
+                                                               FontWeight="Bold"
+                                                               Foreground="{StaticResource PrimaryTextBrush}"
+                                                               TextTrimming="CharacterEllipsis"/>
+                                                    
+                                                    <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                                        <TextBlock Text="{Binding Version}"
+                                                                   FontSize="11"
+                                                                   Foreground="{StaticResource AccentHoverBrush}"
+                                                                   FontWeight="SemiBold"/>
+                                                        <TextBlock Text="{Binding Size, StringFormat={} • {0}}"
+                                                                   FontSize="11"
+                                                                   Foreground="{StaticResource MutedTextBrush}"
+                                                                   Visibility="{Binding HasSize, Converter={StaticResource BoolToVis}}"/>
+                                                    </StackPanel>
+                                                </StackPanel>
+
+                                                <!-- Short Description -->
+                                                <TextBlock Grid.Row="1"
+                                                           Text="{Binding ShortDescription}"
+                                                           FontSize="12"
+                                                           Foreground="{StaticResource SecondaryTextBrush}"
+                                                           TextTrimming="CharacterEllipsis"
+                                                           TextWrapping="Wrap"
+                                                           MaxHeight="50"
+                                                           LineHeight="16"
+                                                           Margin="0,2,0,0"/>
+
+                                                <!-- Bottom Action Bar -->
+                                                <Border Grid.Row="2"
+                                                        Margin="0,8,0,0"
+                                                        Padding="0,6,0,0"
+                                                        BorderBrush="{StaticResource BorderSubtleBrush}"
+                                                        BorderThickness="0,1,0,0">
+                                                    <Grid>
+                                                        <TextBlock Text="{utilities:Loc CatalogClickToView}"
+                                                                   FontSize="11"
+                                                                   FontWeight="SemiBold"
+                                                                   Foreground="{StaticResource AccentHoverBrush}"
+                                                                   VerticalAlignment="Center"/>
+                                                        <Path Data="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"
+                                                              Fill="{StaticResource AccentHoverBrush}"
+                                                              Width="12" Height="12"
+                                                              Stretch="Uniform"
+                                                              HorizontalAlignment="Right"
+                                                              VerticalAlignment="Center"/>
+                                                    </Grid>
+                                                </Border>
+                                            </Grid>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+
+                <!-- VIEW 2: CUSTOM DIRECT URL -->
+                <ScrollViewer x:Name="CustomUrlViewContainer" 
+                              VerticalScrollBarVisibility="Auto" 
+                              HorizontalScrollBarVisibility="Disabled"
+                              Visibility="Collapsed">
+                    <StackPanel MaxWidth="780" HorizontalAlignment="Left">
+                        <!-- URL Input Card -->
+                        <Border Style="{StaticResource CardHighlight}" 
+                                Margin="0,0,0,24" 
+                                x:Name="UrlInputCard">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                                    <Border Background="{StaticResource AccentBadgeBg}"
+                                            CornerRadius="10"
+                                            Width="40" Height="40"
+                                            Margin="0,0,14,0">
+                                        <Path Data="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"
+                                              Fill="{StaticResource AccentHoverBrush}"
+                                              Width="20" Height="20"
+                                              Stretch="Uniform"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock Text="{utilities:Loc InstallUrlLabel}" 
+                                               FontSize="18" 
+                                               FontWeight="Bold" 
+                                               Foreground="{StaticResource PrimaryTextBrush}"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                                
+                                <TextBox x:Name="UrlTextBox" 
+                                         Style="{StaticResource ModernTextBox}"
+                                         Tag="{utilities:Loc InstallUrlPlaceholder}"
+                                         Margin="0,0,0,20"
+                                         FontSize="15"
+                                         Height="48"/>
+
+                                <Button x:Name="InstallButton" 
+                                        Style="{StaticResource PrimaryButton}" 
+                                        HorizontalAlignment="Left"
+                                        Padding="28,12"
+                                        Click="InstallButton_Click">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Path Data="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z" 
+                                              Fill="White"
+                                              Width="16" Height="16" 
+                                              Stretch="Uniform"
+                                              Margin="0,0,10,0"/>
+                                        <TextBlock Text="{utilities:Loc InstallButton}" 
+                                                   FontSize="14" 
+                                                   FontWeight="SemiBold"
+                                                   VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Info Tip Card -->
+                        <Border Style="{StaticResource CardSubtle}">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                    <Path Data="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"
+                                          Fill="{StaticResource WarningBrush}"
+                                          Width="18" Height="18"
+                                          Stretch="Uniform"
+                                          Margin="0,0,10,0"
+                                          VerticalAlignment="Center"/>
+                                    <TextBlock Text="{utilities:Loc InstallTipTitle}" 
+                                               FontSize="15" 
+                                               FontWeight="Bold" 
+                                               Foreground="{StaticResource PrimaryTextBrush}"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                                
+                                <TextBlock Text="{utilities:Loc InstallTipDescription}" 
+                                           FontSize="13" 
+                                           Foreground="{StaticResource SecondaryTextBrush}"
+                                           TextWrapping="Wrap"
+                                           LineHeight="20"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+
+        <!-- MODAL OVERLAY: DETAILED VIEW OF SELECTED REDUX MOD -->
+        <Grid x:Name="ModDetailsModal"
+              Background="#B309090D"
+              Visibility="Collapsed">
+            <Border Background="{StaticResource BackgroundBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="16"
+                    MaxWidth="720"
+                    MaxHeight="620"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    ClipToBounds="True">
+                <Border.Effect>
+                    <DropShadowEffect Color="#000000" Opacity="0.7" BlurRadius="30" ShadowDepth="8"/>
+                </Border.Effect>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="220"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Top Banner Image -->
+                    <Grid Grid.Row="0">
+                        <!-- Image placeholder -->
+                        <Border Background="#1C1824"/>
+                        <Image x:Name="ModalModImage"
+                               Stretch="UniformToFill"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+
+                        <!-- Gradient Overlay -->
+                        <Border>
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0.3" EndPoint="0,1">
+                                    <GradientStop Color="Transparent" Offset="0"/>
+                                    <GradientStop Color="#FF101014" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+
+                        <!-- Close Button Top Right -->
+                        <Button Style="{StaticResource TitleBarButton}"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Margin="16"
+                                Width="32" Height="32"
+                                Click="CloseModal_Click">
+                            <Path Data="M 0 0 L 10 10 M 10 0 L 0 10" 
+                                  Stroke="White" 
+                                  StrokeThickness="1.8"
+                                  Width="12" Height="12"
+                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Button>
+
+                        <!-- Mod Title on Banner -->
+                        <StackPanel VerticalAlignment="Bottom" Margin="24,0,24,12">
+                            <Border x:Name="ModalModBadge"
+                                    Background="{StaticResource AccentGradient}"
+                                    CornerRadius="6"
+                                    Padding="10,4"
+                                    HorizontalAlignment="Left"
+                                    Margin="0,0,0,8"
+                                    Visibility="Collapsed">
+                                <TextBlock x:Name="ModalModBadgeText"
+                                           FontSize="11"
+                                           FontWeight="Bold"
+                                           Foreground="White"/>
+                            </Border>
+
+                            <TextBlock x:Name="ModalModTitle"
+                                       Text="GTA 5 Redux Original"
+                                       FontSize="24"
+                                       FontWeight="Bold"
+                                       Foreground="{StaticResource PrimaryTextBrush}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Middle: Details & Full Description -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="24,16,24,16">
+                        <StackPanel>
+                            <!-- Metadata Chips (Version, Size, Author) -->
+                            <WrapPanel Margin="0,0,0,16">
+                                <Border Background="{StaticResource CardBrush}" 
+                                        BorderBrush="{StaticResource BorderBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="8" 
+                                        Padding="12,6" 
+                                        Margin="0,0,10,8">
+                                    <TextBlock x:Name="ModalModVersion"
+                                               Text="Версія: v1.16"
+                                               FontSize="12"
+                                               FontWeight="SemiBold"
+                                               Foreground="{StaticResource AccentHoverBrush}"/>
+                                </Border>
+
+                                <Border x:Name="ModalModSizeBorder"
+                                        Background="{StaticResource CardBrush}" 
+                                        BorderBrush="{StaticResource BorderBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="8" 
+                                        Padding="12,6" 
+                                        Margin="0,0,10,8">
+                                    <TextBlock x:Name="ModalModSize"
+                                               Text="Розмір: 3.8 GB"
+                                               FontSize="12"
+                                               Foreground="{StaticResource PrimaryTextBrush}"/>
+                                </Border>
+
+                                <Border x:Name="ModalModAuthorBorder"
+                                        Background="{StaticResource CardBrush}" 
+                                        BorderBrush="{StaticResource BorderBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="8" 
+                                        Padding="12,6" 
+                                        Margin="0,0,10,8">
+                                    <TextBlock x:Name="ModalModAuthor"
+                                               Text="Автор: Josh Romito"
+                                               FontSize="12"
+                                               Foreground="{StaticResource SecondaryTextBrush}"/>
+                                </Border>
+                            </WrapPanel>
+
+                            <!-- Description Header -->
+                            <TextBlock Text="{utilities:Loc CatalogAboutMod}"
+                                       FontSize="15"
+                                       FontWeight="Bold"
+                                       Foreground="{StaticResource PrimaryTextBrush}"
+                                       Margin="0,0,0,8"/>
+
+                            <!-- Full Description Content -->
+                            <TextBlock x:Name="ModalModDescription"
+                                       Text="Full description..."
+                                       FontSize="13"
+                                       Foreground="{StaticResource SecondaryTextBrush}"
+                                       TextWrapping="Wrap"
+                                       LineHeight="22"/>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- Bottom Action Buttons Footer -->
+                    <Border Grid.Row="2"
+                            Background="{StaticResource CardSecondaryBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,0,0"
+                            Padding="24,16">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Video Review Button (visible if video_url exists) -->
+                            <Button Grid.Column="0"
+                                    x:Name="ModalWatchVideoBtn"
+                                    Style="{StaticResource SecondaryButton}"
+                                    Click="WatchVideoBtn_Click">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Path Data="M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 19c-4.19 0-6.8-.16-7.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L2 12c0-2.19.16-3.8.44-4.83.25-.9.83-1.48 1.73-1.73.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 5c4.19 0 6.8.16 7.83.44.9.25 1.48.83 1.73 1.73z"
+                                          Fill="#FF0033"
+                                          Width="18" Height="18"
                                           Stretch="Uniform"
                                           Margin="0,0,8,0"
                                           VerticalAlignment="Center"/>
-                                    <TextBlock Text="{utilities:Loc InstallOpenFolder}" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{utilities:Loc CatalogWatchVideo}" 
+                                               FontSize="13" 
+                                               FontWeight="SemiBold"
+                                               VerticalAlignment="Center"/>
                                 </StackPanel>
                             </Button>
-                        </StackPanel>
-                    </StackPanel>
-                </Border>
 
-                <!-- Info Tip Card -->
-                <Border Style="{StaticResource CardSubtle}">
-                    <StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Path Data="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"
-                                  Fill="{StaticResource WarningBrush}"
-                                  Width="18" Height="18"
-                                  Stretch="Uniform"
-                                  Margin="0,0,10,0"
-                                  VerticalAlignment="Center"/>
-                            <TextBlock Text="{utilities:Loc InstallTipTitle}" 
-                                       FontSize="15" 
-                                       FontWeight="Bold" 
-                                       Foreground="{StaticResource PrimaryTextBrush}"
-                                       VerticalAlignment="Center"/>
-                        </StackPanel>
-                        
-                        <TextBlock Text="{utilities:Loc InstallTipDescription}" 
-                                   FontSize="13" 
-                                   Foreground="{StaticResource SecondaryTextBrush}"
-                                   TextWrapping="Wrap"
-                                   LineHeight="20"/>
-                    </StackPanel>
-                </Border>
-            </StackPanel>
-        </ScrollViewer>
+                            <!-- Right Side Buttons: Cancel + Install -->
+                            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                <Button Style="{StaticResource SecondaryButton}"
+                                        Content="{utilities:Loc CommonCancel}"
+                                        Margin="0,0,12,0"
+                                        Padding="18,10"
+                                        Click="CloseModal_Click"/>
+
+                                <!-- Install Button: "Встановити" -->
+                                <Button x:Name="ModalInstallBtn"
+                                        Style="{StaticResource PrimaryButton}"
+                                        Padding="28,10"
+                                        Click="ModalInstallBtn_Click">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Path Data="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z" 
+                                              Fill="White"
+                                              Width="16" Height="16" 
+                                              Stretch="Uniform"
+                                              Margin="0,0,10,0"/>
+                                        <TextBlock Text="{utilities:Loc InstallButtonSimple}" 
+                                                   FontSize="14" 
+                                                   FontWeight="Bold"
+                                                   VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

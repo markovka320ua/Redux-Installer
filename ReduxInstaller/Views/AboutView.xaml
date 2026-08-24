@@ -76,7 +76,7 @@
                                             Padding="8,2"
                                             VerticalAlignment="Center">
                                         <TextBlock x:Name="VersionBadge"
-                                                   Text="v1.0.12" 
+                                                   Text="v1.1.0" 
                                                    FontSize="12" 
                                                    FontWeight="Bold" 
                                                    Foreground="{StaticResource AccentHoverBrush}"/>

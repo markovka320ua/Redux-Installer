@@ -1,9 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using ReduxInstaller.Services;
 using ReduxInstaller.Models;
@@ -16,6 +20,8 @@ namespace ReduxInstaller.Views
         private DownloadTask? _currentDownloadTask;
         private string? _downloadedFilePath;
         private bool _isInstalling;
+        private List<ReduxModItem> _allMods = new List<ReduxModItem>();
+        private ReduxModItem? _selectedMod;
 
         public bool IsInstalling => _isInstalling;
 
@@ -30,7 +36,7 @@ namespace ReduxInstaller.Views
             Unloaded += InstallView_Unloaded;
         }
 
-        private void InstallView_Loaded(object sender, RoutedEventArgs e)
+        private async void InstallView_Loaded(object sender, RoutedEventArgs e)
         {
             // Subscribe to download manager events
             var downloadManager = DownloadManagerService.Instance;
@@ -47,7 +53,7 @@ namespace ReduxInstaller.Views
                     _currentDownloadTask = activeTask;
                     _isInstalling = true;
                     _downloadedFilePath = activeTask.DestinationPath;
-                    UrlInputCard.Visibility = Visibility.Collapsed;
+                    ProgressModName.Text = activeTask.FileName;
                     ProgressCard.Visibility = Visibility.Visible;
                     InstallButton.IsEnabled = false;
 
@@ -66,6 +72,9 @@ namespace ReduxInstaller.Views
             {
                 ResetUI();
             }
+
+            // Load catalog of mods from GitHub
+            await LoadCatalogAsync();
         }
 
         private void InstallView_Unloaded(object sender, RoutedEventArgs e)
@@ -77,9 +86,207 @@ namespace ReduxInstaller.Views
             downloadManager.DownloadTaskFailed -= DownloadManager_DownloadTaskFailed;
         }
 
+        private async System.Threading.Tasks.Task LoadCatalogAsync()
+        {
+            try
+            {
+                CatalogLoadingBorder.Visibility = Visibility.Visible;
+                CatalogEmptyBorder.Visibility = Visibility.Collapsed;
+
+                _allMods = await ReduxCatalogService.Instance.GetModsAsync();
+
+                CatalogLoadingBorder.Visibility = Visibility.Collapsed;
+                ApplyFilter();
+            }
+            catch (Exception ex)
+            {
+                CatalogLoadingBorder.Visibility = Visibility.Collapsed;
+                LoggingService.Instance.Error("Failed to load catalog", ex);
+            }
+        }
+
+        private void ApplyFilter()
+        {
+            var query = SearchTextBox.Text?.Trim().ToLowerInvariant() ?? string.Empty;
+            var filtered = string.IsNullOrWhiteSpace(query)
+                ? _allMods
+                : _allMods.Where(m =>
+                    m.Title.ToLowerInvariant().Contains(query) ||
+                    m.ShortDescription.ToLowerInvariant().Contains(query) ||
+                    m.FullDescription.ToLowerInvariant().Contains(query) ||
+                    (m.Badge != null && m.Badge.ToLowerInvariant().Contains(query))).ToList();
+
+            ModsItemsControl.ItemsSource = filtered;
+
+            if (filtered.Count == 0 && _allMods.Count > 0)
+            {
+                CatalogEmptyBorder.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                CatalogEmptyBorder.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ApplyFilter();
+        }
+
+        #region Tab Switching (Catalog / Custom URL)
+
+        private void CatalogTabBtn_Click(object sender, RoutedEventArgs e)
+        {
+            SwitchToCatalogTab();
+        }
+
+        private void CustomUrlTabBtn_Click(object sender, RoutedEventArgs e)
+        {
+            SwitchToCustomUrlTab();
+        }
+
+        private void SwitchToCatalogTab()
+        {
+            CatalogTabBtn.Style = (Style)FindResource("ActiveTabPillButton");
+            CustomUrlTabBtn.Style = (Style)FindResource("TabPillButton");
+            CatalogViewContainer.Visibility = Visibility.Visible;
+            CustomUrlViewContainer.Visibility = Visibility.Collapsed;
+            SearchBoxBorder.Visibility = Visibility.Visible;
+        }
+
+        private void SwitchToCustomUrlTab()
+        {
+            CatalogTabBtn.Style = (Style)FindResource("TabPillButton");
+            CustomUrlTabBtn.Style = (Style)FindResource("ActiveTabPillButton");
+            CatalogViewContainer.Visibility = Visibility.Collapsed;
+            CustomUrlViewContainer.Visibility = Visibility.Visible;
+            SearchBoxBorder.Visibility = Visibility.Collapsed;
+        }
+
+        #endregion
+
+        #region Mod Card Details Modal Dialog
+
+        private void ModCard_Click(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is Border border && border.DataContext is ReduxModItem mod)
+            {
+                OpenModDetailsModal(mod);
+            }
+        }
+
+        private void OpenModDetailsModal(ReduxModItem mod)
+        {
+            _selectedMod = mod;
+
+            // Fill details
+            ModalModTitle.Text = mod.Title;
+            ModalModDescription.Text = string.IsNullOrWhiteSpace(mod.FullDescription) ? mod.ShortDescription : mod.FullDescription;
+            ModalModVersion.Text = $"Версія: {mod.Version}";
+
+            if (mod.HasBadge)
+            {
+                ModalModBadge.Visibility = Visibility.Visible;
+                ModalModBadgeText.Text = mod.Badge;
+            }
+            else
+            {
+                ModalModBadge.Visibility = Visibility.Collapsed;
+            }
+
+            if (mod.HasSize)
+            {
+                ModalModSizeBorder.Visibility = Visibility.Visible;
+                ModalModSize.Text = $"Розмір: {mod.Size}";
+            }
+            else
+            {
+                ModalModSizeBorder.Visibility = Visibility.Collapsed;
+            }
+
+            if (mod.HasAuthor)
+            {
+                ModalModAuthorBorder.Visibility = Visibility.Visible;
+                ModalModAuthor.Text = $"Автор: {mod.Author}";
+            }
+            else
+            {
+                ModalModAuthorBorder.Visibility = Visibility.Collapsed;
+            }
+
+            // Image
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(mod.ImageUrl))
+                {
+                    ModalModImage.Source = new BitmapImage(new Uri(mod.ImageUrl, UriKind.RelativeOrAbsolute));
+                }
+                else
+                {
+                    ModalModImage.Source = null;
+                }
+            }
+            catch
+            {
+                ModalModImage.Source = null;
+            }
+
+            // Video button
+            ModalWatchVideoBtn.Visibility = mod.HasVideo ? Visibility.Visible : Visibility.Collapsed;
+
+            // Show Modal
+            ModDetailsModal.Visibility = Visibility.Visible;
+        }
+
+        private void CloseModal_Click(object sender, RoutedEventArgs e)
+        {
+            ModDetailsModal.Visibility = Visibility.Collapsed;
+            _selectedMod = null;
+        }
+
+        private void WatchVideoBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (_selectedMod != null && _selectedMod.HasVideo)
+            {
+                try
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = _selectedMod.VideoUrl,
+                        UseShellExecute = true
+                    });
+                }
+                catch (Exception ex)
+                {
+                    LoggingService.Instance.Error("Failed to open video url", ex);
+                }
+            }
+        }
+
+        private void ModalInstallBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (_selectedMod == null) return;
+
+            var downloadUrl = _selectedMod.DownloadUrl;
+            var modTitle = _selectedMod.Title;
+
+            ModDetailsModal.Visibility = Visibility.Collapsed;
+
+            if (string.IsNullOrWhiteSpace(downloadUrl))
+            {
+                ShowError("Для цього моду ще не вказано пряме посилання на завантаження.");
+                return;
+            }
+
+            StartDownloadProcess(downloadUrl, modTitle);
+        }
+
+        #endregion
+
+        #region Installation Logic
+
         private void ResetUI()
         {
-            UrlInputCard.Visibility = Visibility.Visible;
             ProgressCard.Visibility = Visibility.Collapsed;
             SuccessCard.Visibility = Visibility.Collapsed;
             UrlTextBox.Text = string.Empty;
@@ -92,7 +299,7 @@ namespace ReduxInstaller.Views
             mainWindow?.HideDownloadManagerButton();
         }
 
-        private async void InstallButton_Click(object sender, RoutedEventArgs e)
+        private void InstallButton_Click(object sender, RoutedEventArgs e)
         {
             var url = UrlTextBox.Text?.Trim() ?? string.Empty;
 
@@ -109,6 +316,11 @@ namespace ReduxInstaller.Views
                 return;
             }
 
+            StartDownloadProcess(url, "Custom Redux");
+        }
+
+        private async void StartDownloadProcess(string url, string modDisplayName)
+        {
             // Check GTA V path
             var settingsService = SettingsService.Instance;
             if (!settingsService.IsGtaVPathSet())
@@ -127,8 +339,9 @@ namespace ReduxInstaller.Views
 
             // Start download
             _isInstalling = true;
-            UrlInputCard.Visibility = Visibility.Collapsed;
+            ProgressModName.Text = modDisplayName;
             ProgressCard.Visibility = Visibility.Visible;
+            SuccessCard.Visibility = Visibility.Collapsed;
             InstallButton.IsEnabled = false;
 
             // Show download manager button
@@ -161,6 +374,10 @@ namespace ReduxInstaller.Views
                 LoggingService.Instance.Error("Installation failed", ex);
                 ResetUI();
                 ShowError(LocalizationService.Instance.GetString("ErrorDownloadFailed"));
+            }
+            finally
+            {
+                InstallButton.IsEnabled = true;
             }
         }
 
@@ -367,28 +584,6 @@ namespace ReduxInstaller.Views
             NotificationService.Instance.ShowInfo(LocalizationService.Instance.GetString("InstallTitle"), message);
         }
 
-        private string FormatBytes(long bytes)
-        {
-            string[] sizes = { "B", "KB", "MB", "GB", "TB" };
-            int order = 0;
-            double size = bytes;
-
-            while (size >= 1024 && order < sizes.Length - 1)
-            {
-                order++;
-                size /= 1024;
-            }
-
-            return $"{size:0.##} {sizes[order]}";
-        }
-
-        private string FormatTime(TimeSpan time)
-        {
-            if (time.TotalHours > 1)
-                return $"{(int)time.TotalHours}h {time.Minutes}m";
-            if (time.TotalMinutes > 1)
-                return $"{time.Minutes}m {time.Seconds}s";
-            return $"{time.Seconds}s";
-        }
+        #endregion
     }
-}
+}

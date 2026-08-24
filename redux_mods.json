@@ -1,0 +1,30 @@
+[
+  {
+    "id": "redux-original",
+    "title": "GTA 5 Redux Original",
+    "version": "v1.16",
+    "badge": "Популярне",
+    "date": "2024",
+    "author": "Josh Romito",
+    "size": "3.8 GB",
+    "image_url": "https://raw.githubusercontent.com/markovka320ua/Redux-Installer/main/Resources/Mods/redux_original.jpg",
+    "video_url": "https://www.youtube.com/watch?v=k10Et4VpHaU",
+    "download_url": "",
+    "short_description": "Повна переробка графіки, шейдерів, погоди, фізики та текстур 4K для GTA V.",
+    "full_description": "GTA 5 Redux — це масштабна модифікація для Grand Theft Auto V, яка включає:\n\n• Повністю перероблені погодні цикли та освітлення\n• 4K текстури доріг, рослинності, частинок пилу, диму та вибухів\n• Поліпшена фізика керування транспортом, падіння тіл та пошкоджень\n• Нова поведінка поліції та покращений AI пішоходів\n• Оптимізована продуктивність для плавної частоти кадрів."
+  },
+  {
+    "id": "redux-lite",
+    "title": "GTA 5 Redux Lite Edition",
+    "version": "v1.5",
+    "badge": "Для слабких ПК",
+    "date": "2024",
+    "author": "Redux Team",
+    "size": "1.9 GB",
+    "image_url": "https://raw.githubusercontent.com/markovka320ua/Redux-Installer/main/Resources/Mods/redux_lite.jpg",
+    "video_url": "",
+    "download_url": "",
+    "short_description": "Полегшена версія Redux для максимальної продуктивності та стабільного FPS.",
+    "full_description": "Оптимізована версія моду Redux зі збереженням ключових графічних ефектів:\n\n• Оновлена колірна гама та контраст\n• Прибрані важкі текстури для максимальної продуктивності\n• Збережено покращену фізику та ефекти частинок\n• Ідеально підходить для ноутбуків та середніх ПК."
+  }
+]
