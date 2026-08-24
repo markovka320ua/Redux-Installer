@@ -109,5 +109,14 @@
   "download_empty": "История загрузок пуста",
   "status_completed": "Завершено",
   "status_failed": "Ошибка",
-  "status_cancelled": "Отменено"
+  "status_cancelled": "Отменено",
+  "AboutUpdatesTitle": "Обновления программы",
+  "AboutCheckUpdates": "Проверить обновления (GitHub)",
+  "AboutCheckingUpdates": "Проверка...",
+  "AboutUpdateAvailable": "Доступна новая версия:",
+  "AboutUpToDate": "У вас установлена последняя версия",
+  "AboutUpdateButton": "Обновить программу",
+  "AboutDownloadingUpdate": "Загрузка обновления...",
+  "AboutUpdateError": "Не удалось проверить или загрузить обновление."
 }
+

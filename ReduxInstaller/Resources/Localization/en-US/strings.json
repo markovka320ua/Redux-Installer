@@ -109,5 +109,13 @@
   "download_empty": "Download history is empty",
   "status_completed": "Completed",
   "status_failed": "Failed",
-  "status_cancelled": "Cancelled"
-}
+  "status_cancelled": "Cancelled",
+  "AboutUpdatesTitle": "App Updates",
+  "AboutCheckUpdates": "Check for Updates (GitHub)",
+  "AboutCheckingUpdates": "Checking...",
+  "AboutUpdateAvailable": "New version available:",
+  "AboutUpToDate": "You have the latest version",
+  "AboutUpdateButton": "Update App",
+  "AboutDownloadingUpdate": "Downloading update...",
+  "AboutUpdateError": "Failed to check or download the update."
+}

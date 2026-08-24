@@ -155,9 +155,12 @@
                                                 <TextBlock Grid.Column="0" 
                                                            FontSize="12" 
                                                            Foreground="{StaticResource SecondaryTextBrush}">
-                                                    <Run Text="{Binding DownloadedSize}"/>
-                                                    <Run Text=" / "/>
-                                                    <Run Text="{Binding TotalSize}"/>
+                                                    <TextBlock.Text>
+                                                        <MultiBinding StringFormat="{}{0} / {1}">
+                                                            <Binding Path="DownloadedSize"/>
+                                                            <Binding Path="TotalSize"/>
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
                                                 </TextBlock>
                                                 <TextBlock Grid.Column="1" 
                                                            Text="{Binding SpeedText}" 

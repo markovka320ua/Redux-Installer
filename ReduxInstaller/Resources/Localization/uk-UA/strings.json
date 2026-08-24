@@ -109,5 +109,13 @@
   "download_empty": "Історія завантажень порожня",
   "status_completed": "Завершено",
   "status_failed": "Помилка",
-  "status_cancelled": "Скасовано"
-}
+  "status_cancelled": "Скасовано",
+  "AboutUpdatesTitle": "Оновлення програми",
+  "AboutCheckUpdates": "Перевірити оновлення (GitHub)",
+  "AboutCheckingUpdates": "Перевірка...",
+  "AboutUpdateAvailable": "Доступна нова версія:",
+  "AboutUpToDate": "У вас встановлена остання версія",
+  "AboutUpdateButton": "Оновити програму",
+  "AboutDownloadingUpdate": "Завантаження оновлення...",
+  "AboutUpdateError": "Не вдалося перевірити або завантажити оновлення."
+}
