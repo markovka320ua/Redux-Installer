@@ -39,6 +39,20 @@
     "video_url": "https://youtu.be/K6ZmHL_fz6E?si=3Z43MPfMjuTHiTSE",
     "download_url": "https://drive.usercontent.google.com/download?id=1rg7BnSDhN19ZFYc2IP73vjFlCAoJT1gH&export=download&authuser=3&confirm=t&uuid=6c262441-12eb-486f-9ddf-01f7a9b9c7b8&at=AFYLz4NnfB0I5gRx9SrXLuus2QeE:1787586892416",
     "short_description": "Redux фамы Thugger.",
-    "full_description": "Redux Thugger:\n\n• Fps boost\n• ЦК\n• Дефолт деревья.\n• Кастом прицел.\n• Залазы.\n• Возможность выключить снег (работает только на directX11).\n• Возможность выключить снег (работает только на directX11).\n• Эффекты при попадании\n• Убрана тряска при взрыве\n• Изменена карта\n• Изменен прицел на хевик + red трассера"
+    "full_description": "Redux Thugger:\n\n• Fps boost\n• ЦК\n• Дефолт деревья.\n• Кастом прицел.\n• Залазы.\n• Возможность выключить снег (работает только на directX11).\n• Эффекты при попадании\n• Убрана тряска при взрыве\n• Изменена карта\n• Изменен прицел на хевик + red трассера"
+  },
+  {
+    "id": "redux-gos",
+    "title": "Redux Gos",
+    "version": "v1.0",
+    "badge": "New",
+    "date": "2026",
+    "author": "A1rent",
+    "size": "5.38 GB",
+    "image_url": "https://i.ibb.co/227kWhN/image.png",
+    "video_url": "https://www.youtube.com/watch?v=xpuywhhfuVA",
+    "download_url": "https://drive.usercontent.google.com/download?id=10fSWTT2U_2-Ab8mFFREyNsveUMANFvbq&export=download&authuser=0&confirm=t&uuid=e40570c9-99b4-4db5-9fe8-e69734174a38&at=AFYLz4PhgmFpWJ9ZTXO8Uar3g8iw%3A1787623150270",
+    "short_description": "Redux GOS.",
+    "full_description": "Redux Gos:\n\n• Таймцыклы переделаны\n• Быстрый заход\n• Добавлены дороги\n•Деревья (зима весна осень лето)\n•Заменены звуки оружия\n•Более прозрачная вода\n•Ган пак для госников дополненный\n•Трасера на хевик и марсманку\n•Оптимизация более стабильная\n•Карта с новыми обозначениями крафтов\n•Все популярные залазы\n•Заменены шрифты\n•Расписания на всех титулах гос и крайм"
   }
 ]
