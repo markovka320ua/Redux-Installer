@@ -31,7 +31,7 @@
 
 <div align="center">
   <img src="https://i.ibb.co/jvykqCg3/image.png" alt="Redux Installer Interface"/>
-  <img src="https://i.ibb.co/d06s2H48/image.png" alt="Redux Installer Interface"/>
+  <img src="https://i.ibb.co/yBFXpzYN/image.png" alt="Redux Installer Interface"/>
 </div>
 
 ---
